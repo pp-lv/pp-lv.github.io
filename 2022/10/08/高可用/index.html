@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>高可用 |  LPL&#39;s Blog</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-高可用"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  高可用
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/10/08/%E9%AB%98%E5%8F%AF%E7%94%A8/" class="article-date">
+  <time datetime="2022-10-08T10:39:52.000Z" itemprop="datePublished">2022-10-08</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%85%AB%E8%82%A1%E6%96%87/">八股文</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">4.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">15 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1 id="1-限流"><a href="#1-限流" class="headerlink" title="1.限流"></a>1.限流</h1><p>限流就是对请求的速率进行限制，避免瞬时的大量请求击垮软件系统。</p>
+<span id="more"></span>
+
+<h3 id="1-1-常见的限流算法"><a href="#1-1-常见的限流算法" class="headerlink" title="1.1 常见的限流算法"></a>1.1 常见的限流算法</h3><h4 id="1-1-1-固定窗口计数器算法"><a href="#1-1-1-固定窗口计数器算法" class="headerlink" title="1.1.1 固定窗口计数器算法"></a>1.1.1 固定窗口计数器算法</h4><p>固定窗口其实就是时间窗口。<strong>固定窗口计数器算法</strong> 规定了我们单位时间处理的请求数量。</p>
+<p>假如我们规定系统中某个接口 1 分钟只能访问 33 次的话，使用固定窗口计数器算法的实现思路如下：</p>
+<ul>
+<li>给定一个变量 <code>counter</code> 来记录当前接口处理的请求数量，初始值为 0（代表接口当前 1 分钟内还未处理请求）。</li>
+<li>1 分钟之内每处理一个请求之后就将 <code>counter+1</code> ，当 <code>counter=33</code> 之后（也就是说在这 1 分钟内接口已经被访问 33 次的话），后续的请求就会被全部拒绝。</li>
+<li>等到 1 分钟结束后，将 <code>counter</code> 重置 0，重新开始计数。</li>
+</ul>
+<p><strong>这种限流算法无法保证限流速率，因而无法保证突然激增的流量。</strong></p>
+<h4 id="1-1-2-滑动窗口计数器算法"><a href="#1-1-2-滑动窗口计数器算法" class="headerlink" title="1.1.2 滑动窗口计数器算法"></a>1.1.2 滑动窗口计数器算法</h4><p><strong>滑动窗口计数器算法</strong> 算的上是固定窗口计数器算法的升级版。</p>
+<p>滑动窗口计数器算法相比于固定窗口计数器算法的优化在于：<strong>它把时间以一定比例分片</strong> 。</p>
+<p>例如我们的接口限流每分钟处理 60 个请求，我们可以把 1 分钟分为 60 个窗口。每隔 1 秒移动一次，每个窗口一秒只能处理 不大于 <code>60(请求数)/60（窗口数）</code> 的请求， 如果当前窗口的请求计数总和超过了限制的数量的话就不再处理其他请求。</p>
+<p>很显然， <strong>当滑动窗口的格子划分的越多，滑动窗口的滚动就越平滑，限流的统计就会越精确。</strong></p>
+<h4 id="1-1-3-漏桶算法"><a href="#1-1-3-漏桶算法" class="headerlink" title="1.1.3 漏桶算法"></a>1.1.3 漏桶算法</h4><p>我们可以把发请求的动作比作成注水到桶中，我们处理请求的过程可以比喻为漏桶漏水。我们往桶中以任意速率流入水，以一定速率流出水。当水超过桶流量则丢弃，因为桶容量是不变的，保证了整体的速率。（用队列实现）</p>
+<h4 id="1-1-4-令牌桶算法"><a href="#1-1-4-令牌桶算法" class="headerlink" title="1.1.4 令牌桶算法"></a>1.1.4 令牌桶算法</h4><p>令牌桶算法和漏桶算法算法一样，不过现在桶里装的是令牌了，请求在被处理之前需要拿到一个令牌，请求处理完毕之后将这个令牌丢弃（删除）。我们根据限流大小，按照一定的速率往桶里添加令牌。如果桶装满了，就不能继续往里面继续添加令牌了。</p>
+<h3 id="1-2-单机限流"><a href="#1-2-单机限流" class="headerlink" title="1.2 单机限流"></a>1.2 单机限流</h3><p>单机限流可以直接使用 Google Guava 自带的限流工具类 <code>RateLimiter</code> 。 <code>RateLimiter</code> 基于令牌桶算法，可以应对突发流量。</p>
+<blockquote>
+<p>Guava 地址：<a target="_blank" rel="noopener" href="https://github.com/google/guava">https://github.com/google/guava</a></p>
+</blockquote>
+<p>除了最基本的令牌桶算法(<strong>平滑突发限流</strong>)实现之外，Guava 的<code>RateLimiter</code>还提供了 <strong>平滑预热限流</strong> 的算法实现。</p>
+<p>平滑突发限流就是按照指定的速率放令牌到桶里，而平滑预热限流会有一段预热时间，预热时间之内，速率会逐渐提升到配置的速率。</p>
+<h4 id="1-2-1-平滑突发限流"><a href="#1-2-1-平滑突发限流" class="headerlink" title="1.2.1 平滑突发限流"></a>1.2.1 平滑突发限流</h4><p>以同样的速率稳定的向令牌桶中添加剑令牌。</p>
+<h4 id="1-2-2-平滑预热限流"><a href="#1-2-2-平滑预热限流" class="headerlink" title="1.2.2 平滑预热限流"></a>1.2.2 平滑预热限流</h4><p>在刚开的一段时间内，以逐渐增快的速率向令牌桶中添加令牌，逐步达到规定的速率，然后平稳添加。</p>
+<p>举例：</p>
+<p>假如要1s 放 5 个令牌到桶里，那么就是每0.2s放入一个令牌</p>
+<p><strong>平滑突发限流：</strong>也就是 0.2s 放 1个令牌到桶里</p>
+<p><strong>平滑预热限流：</strong>假如预热时间为3s,也就说刚开始的 3s 内发牌速率会逐渐提升到 0.2s 放 1 个令牌</p>
+<h3 id="1-3-分布式限流"><a href="#1-3-分布式限流" class="headerlink" title="1.3 分布式限流"></a>1.3 分布式限流</h3><p>分布式限流常见的方案：</p>
+<ul>
+<li><strong>借助中间件&#x2F;框架限流</strong> ：可以借助 Sentinel 或者使用 Redis 来自己实现对应的限流逻辑。</li>
+<li><strong>网关层限流</strong> ：比较常用的一种方案，直接在网关层把限流给安排上了。不过，通常网关层限流通常也需要借助到中间件&#x2F;框架。就比如 Spring Cloud Gateway 的分布式限流实现<code>RedisRateLimiter</code>就是基于 Redis+Lua 来实现的，再比如 Spring Cloud Gateway 还可以整合 Sentinel 来做限流。</li>
+</ul>
+<p>如果要基于 Redis 来手动实现限流逻辑的话，建议配合 Lua 脚本来做。</p>
+<h1 id="2-负载均衡"><a href="#2-负载均衡" class="headerlink" title="2.负载均衡"></a>2.负载均衡</h1><p>负载均衡（Load Balance），在微服务或分布式集群中经常用的一种应用。简单的说就是将用户的请求平摊的分配到多个服务上，从而达到系统的HA（高可用）。</p>
+<h2 id="2-1-负载均衡简单分类"><a href="#2-1-负载均衡简单分类" class="headerlink" title="2.1 负载均衡简单分类"></a>2.1 负载均衡简单分类</h2><h3 id="2-1-1-根据负载均衡的位置"><a href="#2-1-1-根据负载均衡的位置" class="headerlink" title="2.1.1 根据负载均衡的位置"></a>2.1.1 根据负载均衡的位置</h3><ul>
+<li><p>集中式LB</p>
+<p>即在服务的消费方和提供方之间使用独立的LB设施，如Nginx，由该设施负责把访问请求通过某种策略转发至服务的提供方！</p>
+</li>
+<li><p>进程式LB</p>
+<p>将LB逻辑集成到消费方，消费方从服务注册中心获知有哪些地址可用，然后自己再从这些地址中选出一个合适的服务器。</p>
+</li>
+</ul>
+<h3 id="2-1-2-网络通信层面分类"><a href="#2-1-2-网络通信层面分类" class="headerlink" title="2.1.2 网络通信层面分类"></a>2.1.2 网络通信层面分类</h3><p>软件负载均衡从通信层面来看，又可以分为四层和七层负载均衡。</p>
+<p><strong>七层负载均衡</strong>：就是可以根据访问用户的 HTTP 请求头、URL 信息将请求转发到特定的主机。</p>
+<ul>
+<li>DNS 重定向</li>
+<li>HTTP 重定向</li>
+<li>反向代理</li>
+</ul>
+<p> <strong>四层负载均衡</strong>：基于 IP 地址和端口进行请求的转发。</p>
+<ul>
+<li>修改 IP 地址</li>
+<li>修改 MAC 地址</li>
+</ul>
+<h4 id="1-DNS-负载均衡"><a href="#1-DNS-负载均衡" class="headerlink" title="1.DNS 负载均衡"></a><strong>1.DNS 负载均衡</strong></h4><p>DNS 负载均衡一般用于互联网公司，复杂的业务系统不适合使用。大型网站一般使用 DNS 负载均衡作为 第一级负载均衡手段，然后在内部使用其它方式做第二级负载均衡。DNS 负载均衡属于七层负载均衡。</p>
+<p>DNS 即 域名解析服务，是 OSI 第七层网络协议。DNS 被设计为一个树形结构的分布式应用，自上而下依次为：根域名服务器，一级域名服务器，二级域名服务器，… ，本地域名服务器。显然，如果所有数据都存储在根域名服务器，那么 DNS 查询的负载和开销会非常庞大。</p>
+<p>因此，DNS 查询相对于 DNS 层级结构，是一个逆向的递归流程，DNS 客户端依次请求本地 DNS 服务器，上一级 DNS 服务器，上上一级 DNS 服务器，… ，根 DNS 服务器（又叫权威 DNS 服务器），一旦命中，立即返回。为了减少查询次数，每一级 DNS 服务器都会设置 DNS 查询缓存。</p>
+<p>DNS 负载均衡的工作原理就是：基于 DNS 查询缓存，按照负载情况返回不同服务器的 IP 地址。</p>
+<img src="/2022/10/08/%E9%AB%98%E5%8F%AF%E7%94%A8/23bda3bcb6244b89a4b57a4e4d87f8aa_tplv-k3u1fbpfcp-zoom-in-crop-mark_3024_0_0_0.awebp" class="" title="框架图">
+
+<p>DNS 重定向的 优点：</p>
+<blockquote>
+<p>使用简单：负载均衡工作，交给 DNS 服务器处理，省掉了负载均衡服务器维护的麻烦</p>
+<p>提高性能：可以支持基于地址的域名解析，解析成距离用户最近的服务器地址（类似 CDN 的原理），可以加快访问速度，改善性能；</p>
+</blockquote>
+<p>DNS 重定向的 缺点：</p>
+<blockquote>
+<p>可用性差：DNS 解析是多级解析，新增&#x2F;修改 DNS 后，解析时间较长；解析过程中，用户访问网站将失败；</p>
+<p>扩展性低：DNS 负载均衡的控制权在域名商那里，无法对其做更多的改善和扩展；</p>
+<p>维护性差：也不能反映服务器的当前运行状态；支持的算法少；不能区分服务器的差异（不能根据系统与服务的状态来判断负载）。</p>
+</blockquote>
+<h3 id="2-2-2-HTTP-负载均衡"><a href="#2-2-2-HTTP-负载均衡" class="headerlink" title="2.2.2 HTTP 负载均衡"></a>2.2.2 HTTP 负载均衡</h3><p>HTTP 负载均衡是基于 <strong>HTTP 重定向</strong>实现的。HTTP 负载均衡属于七层负载均衡。</p>
+<p>HTTP 重定向原理是：根据用户的 HTTP 请求计算出一个真实的服务器地址，将该服务器地址写入 HTTP 重定向响应中，返回给浏览器，由浏览器重新进行访问。</p>
+<img src="/2022/10/08/%E9%AB%98%E5%8F%AF%E7%94%A8/405841c62e1c4678b17679091c163cc2_tplv-k3u1fbpfcp-zoom-in-crop-mark_3024_0_0_0.awebp" class="">
+
+<p>HTTP 重定向的优点：方案简单。</p>
+<p>HTTP 重定向的 缺点：</p>
+<blockquote>
+<p>性能较差：每次访问需要两次请求服务器，增加了访问的延迟。</p>
+<p>降低搜索排名：使用重定向后，搜索引擎会视为 SEO 作弊。</p>
+<p>如果负载均衡器宕机，就无法访问该站点。</p>
+</blockquote>
+<p>由于其缺点比较明显，所以这种负载均衡策略实际应用较少。</p>
+<h3 id="2-2-3-反向代理负载均衡"><a href="#2-2-3-反向代理负载均衡" class="headerlink" title="2.2.3 反向代理负载均衡"></a>2.2.3 反向代理负载均衡</h3><p>反向代理（Reverse Proxy）方式是指以<strong>代理服务器</strong>来接受网络请求，然后 将请求转发给内网中的服务器，并将从内网中的服务器上得到的结果返回给网络请求的客户端。反向代理负载均衡属于七层负载均衡。</p>
+<p>反向代理服务的主流产品：<strong>Nginx、Apache</strong>。</p>
+<p>正向代理与反向代理有什么区别？</p>
+<blockquote>
+<p>正向代理：发生在 客户端，是由用户主动发起的。翻墙软件就是典型的正向代理，客户端通过主动访问代理服务器，让代理服务器获得需要的外网数据，然后转发回客户端。</p>
+<p>反向代理：发生在 服务端，用户不知道代理的存在。</p>
+</blockquote>
+<img src="/2022/10/08/%E9%AB%98%E5%8F%AF%E7%94%A8/c117ad61a69e42b7aef5d8f9d8c1340e_tplv-k3u1fbpfcp-zoom-in-crop-mark_3024_0_0_0.awebp" class="">
+
+<p>反向代理是如何实现负载均衡的呢？以 Nginx 为例，如下所示：</p>
+<img src="/2022/10/08/%E9%AB%98%E5%8F%AF%E7%94%A8/bd9c5617f8114ac9a4ed9912be1d1f51_tplv-k3u1fbpfcp-zoom-in-crop-mark_3024_0_0_0.awebp" class="">
+
+<p>首先，在代理服务器上设定好负载均衡规则。然后，当收到客户端请求，反向代理服务器拦截指定的域名或 IP 请求，根据负载均衡算法，将请求分发到候选服务器上。其次，如果某台候选服务器宕机，反向代理服务器会有容错处理，比如分发请求失败 3 次以上，将请求分发到其他候选服务器上。</p>
+<p>反向代理的 优点：</p>
+<blockquote>
+<ol>
+<li>多种负载均衡算法：支持多种负载均衡算法，以应对不同的场景需求。</li>
+<li>可以监控服务器：基于 HTTP 协议，可以监控转发服务器的状态，如：系统负载、响应时间、是否可用、连接数、流量等，从而根据这些数据调整负载均衡的策略。</li>
+</ol>
+</blockquote>
+<p>反向代理的 缺点：</p>
+<blockquote>
+<ol>
+<li>额外的转发开销：反向代理的转发操作本身是有性能开销的，可能会包括创建连接，等待连接响应，分析响应结果等操作。</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol>
+<li>增加系统复杂度：反向代理常用于做分布式应用的水平扩展，但反向代理服务存在以下问题，为了解决以下问题会给系统整体增加额外的复杂度和运维成本：</li>
+</ol>
+</blockquote>
+<ul>
+<li>反向代理服务如果自身宕机，就无法访问站点，所以需要有 高可用 方案，常见的方案有：主备模式（一主一备）、双主模式（互为主备）。</li>
+<li>反向代理服务自身也存在性能瓶颈，随着需要转发的请求量不断攀升，需要有 可扩展 方案。</li>
+</ul>
+<h3 id="2-2-4-IP负载均衡"><a href="#2-2-4-IP负载均衡" class="headerlink" title="2.2.4 IP负载均衡"></a><strong>2.2.4 IP负载均衡</strong></h3><p>IP 负载均衡是在网络层通过<strong>修改请求目的地址</strong>进行负载均衡。</p>
+
+
+<p>如上图所示，IP 均衡处理流程大致为：</p>
+<blockquote>
+<p>客户端请求 192.168.137.10，由负载均衡服务器接收到报文。</p>
+<p>负载均衡服务器根据算法选出一个服务节点 192.168.0.1，然后将报文请求地址改为该节点的 IP。</p>
+<p>真实服务节点收到请求报文，处理后，返回响应数据到负载均衡服务器。</p>
+<p>负载均衡服务器将响应数据的源地址改负载均衡服务器地址，返回给客户端。</p>
+</blockquote>
+<p>IP 负载均衡在内核进程完成数据分发，较反向代理负载均衡有更好的从处理性能。但是，由于所有请求响应都要经过负载均衡服务器，集群的吞吐量受制于负载均衡服务器的带宽。</p>
+<p><strong>2.2.5 数据链路层负载均衡</strong></p>
+<p>数据链路层负载均衡是指在通信协议的数据链路层<strong>修改 mac 地址</strong>进行负载均衡。</p>
+<img src="/2022/10/08/%E9%AB%98%E5%8F%AF%E7%94%A8/4609fee84efc48c9934bc92292085fe4_tplv-k3u1fbpfcp-zoom-in-crop-mark_3024_0_0_0.awebp" class="">
+
+<p>在 Linux 平台上最好的链路层负载均衡开源产品是 LVS (Linux Virtual Server)。LVS 是基于 Linux 内核中 netfilter 框架实现的负载均衡系统。netfilter 是内核态的 Linux 防火墙机制，可以在数据包流经过程中，根据规则设置若干个关卡（hook 函数）来执行相关的操作。</p>
+<p>LVS 的工作流程大致如下：</p>
+<blockquote>
+<p>当用户访问 <a href="https://link.juejin.cn/?target=http://www.sina.com.cn">www.sina.com.cn</a> 时，用户数据通过层层网络，最后通过交换机进入 LVS 服务器网卡，并进入内核网络层。</p>
+</blockquote>
+<blockquote>
+<p>进入 PREROUTING 后经过路由查找，确定访问的目的 VIP 是本机 IP 地址，所以数据包进入到 INPUT 链上</p>
+</blockquote>
+<blockquote>
+<p>IPVS 是工作在 INPUT 链上，会根据访问的 <strong>vip+port</strong> 判断请求是否 IPVS 服务，如果是则调用注册的 IPVS HOOK 函数，进行 IPVS 相关主流程，强行修改数据包的相关数据，并将数据包发往 POSTROUTING 链上。</p>
+</blockquote>
+<blockquote>
+<p>POSTROUTING 上收到数据包后，根据目标 IP 地址（后端服务器），通过路由选路，将数据包最终发往后端的服务器上。</p>
+</blockquote>
+<p>开源 LVS 版本有 3 种工作模式，每种模式工作原理截然不同，说各种模式都有自己的优缺点，分别适合不同的应用场景，不过最终本质的功能都是能实现均衡的流量调度和良好的扩展性。主要包括三种模式：DR 模式、NAT 模式、Tunnel 模式。</p>
+<h2 id="2-2-负载均衡算法"><a href="#2-2-负载均衡算法" class="headerlink" title="2.2 负载均衡算法"></a>2.2 负载均衡算法</h2><h3 id="2-2-1-随机算法"><a href="#2-2-1-随机算法" class="headerlink" title="2.2.1 随机算法"></a>2.2.1 随机算法</h3><ol>
+<li><p>普通随机</p>
+<p>算法将请求随机分发到候选服务器。随机算法适合服务器硬件相同的场景。学习过概率论的都知道，调用量较小的时候，可能负载并不均匀，调用量越大，负载越均衡。</p>
+</li>
+<li><p>加权随机</p>
+<p>算法在随机算法的基础上，按照概率调整权重，进行负载分配</p>
+</li>
+</ol>
+<h3 id="2-2-2-轮转（Round-Robin）"><a href="#2-2-2-轮转（Round-Robin）" class="headerlink" title="2.2.2 轮转（Round Robin）"></a>2.2.2 轮转（Round Robin）</h3><ol>
+<li><p>普通轮转</p>
+<p>轮流发送给各个服务器，适合服务器处理能力相同、每个业务处理量差不多的场景</p>
+</li>
+<li><p>加权轮转</p>
+<p>给性能更好地服务器更高的权重，能者多劳</p>
+</li>
+</ol>
+<h3 id="2-2-3-最少活跃数"><a href="#2-2-3-最少活跃数" class="headerlink" title="2.2.3 最少活跃数"></a>2.2.3 最少活跃数</h3><p>选择当前连接数&#x2F;请求数最少的服务器，适用于对系统负载较为敏感或请求连接时长相差较大的场景。</p>
+<h3 id="2-2-4-源地址Hash"><a href="#2-2-4-源地址Hash" class="headerlink" title="2.2.4 源地址Hash"></a>2.2.4 源地址Hash</h3><p>给每个请求ip指定一台特定的服务器，保证一个特定用户会访问一个特定服务器</p>
+<h3 id="2-2-5-一致性Hash"><a href="#2-2-5-一致性Hash" class="headerlink" title="2.2.5 一致性Hash"></a>2.2.5 一致性Hash</h3><p>一致性哈希（Consistent Hash）算法的目标是：相同的请求尽可能落到同一个服务器上。</p>
+<p>优点：服务器可能发生上下线，少数服务器的变化不应该影响大多数的请求。加入和删除 节点只影响 哈希环 中 顺时针方向 的 相邻的节点，对其他节点无影响。</p>
+<h2 id="2-3-健康检查"><a href="#2-3-健康检查" class="headerlink" title="2.3 健康检查"></a>2.3 健康检查</h2><p>负载均衡通过健康检查来确认服务的可用性</p>
+<p>为了监控健康的服务器，健康检查一般会通过配置的协议和端口尝试去连接服务器来保证服务器正在监听。如果一个服务器的健康检查失败了，也就是说服务器无法正常响应请求，那么就会被自动的移除池子中，流量也不会被分配到这个坏掉的服务器直到它能通过健康检查。</p>
+<h2 id="2-4-主流的负载均衡软件"><a href="#2-4-主流的负载均衡软件" class="headerlink" title="2.4 主流的负载均衡软件"></a>2.4 主流的负载均衡软件</h2><p>软件负载均衡的 主流产品 有：<strong>Nginx、HAProxy、LVS</strong>。</p>
+<ul>
+<li>LVS 可以作为四层负载均衡器。其负载均衡的性能要优于 Nginx。</li>
+<li>HAProxy 可以作为 HTTP 和 TCP 负载均衡器。</li>
+<li>Nginx、HAProxy 可以作为四层或七层负载均衡器。</li>
+</ul>
+<h2 id="2-5-反向代理-nginx"><a href="#2-5-反向代理-nginx" class="headerlink" title="2.5 反向代理 nginx"></a>2.5 反向代理 nginx</h2><p>将服务打成多个jar包，使用不同端口号，在服务器上运行，在nginx配置文件中进行配置。</p>
+<p>只需要在服务器下载nginx并开启服务，在配置文件加入需要被映射的服务器并选择合适的负载均衡算法就能实现</p>
+<img src="/2022/10/08/%E9%AB%98%E5%8F%AF%E7%94%A8/d82c48d9671ecedb5c161101dd5f63f8.png" class="">
+
+<ul>
+<li>正向代理：客户端不知道真正的服务端</li>
+<li>反向代理：服务端不知道真正的客户端</li>
+</ul>
+<p><strong>配置</strong>：通过nginx.conf配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line">    sendfile        on;</span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line">    server &#123;</span><br><span class="line"></span><br><span class="line">        listen       8081;</span><br><span class="line">        server_name  localhost;</span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            proxy_pass      http://0.0.0.0:9000;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        error_page   500 502 503 504  /50x.html;</span><br><span class="line">        location = /50x.html &#123;</span><br><span class="line">            root   html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>开启服务</strong>:前端</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">&#x27;http&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> server = http.<span class="title function_">createServer</span>();</span><br><span class="line"><span class="keyword">const</span> host = <span class="string">&#x27;0.0.0.0&#x27;</span></span><br><span class="line"><span class="keyword">const</span> port = <span class="number">9000</span></span><br><span class="line"><span class="keyword">let</span> n = <span class="number">0</span></span><br><span class="line">server.<span class="title function_">on</span>(<span class="string">&#x27;request&#x27;</span>, <span class="keyword">function</span> (<span class="params">req, res</span>) &#123;</span><br><span class="line">  n += <span class="number">1</span></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;请求来了: &#x27;</span>, n)</span><br><span class="line">  res.<span class="title function_">write</span>(<span class="string">&#x27;Hello World!!!&#x27;</span>);</span><br><span class="line">  res.<span class="title function_">end</span>();</span><br><span class="line">&#125;);</span><br><span class="line">server.<span class="title function_">listen</span>(port, host, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`服务器启动了，请访问：http://<span class="subst">$&#123;host&#125;</span>:<span class="subst">$&#123;port&#125;</span>`</span>);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>访问 <code>http://localhost:8081/</code> ， <code>nginx</code> 已经能把请求正常打到 <code>node 9000</code> 端口的服务了</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/10/08/%E9%AB%98%E5%8F%AF%E7%94%A8/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%85%AB%E8%82%A1%E6%96%87/" rel="tag">八股文</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" rel="tag">高可用</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2022/10/07/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">并发编程</div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2022
+        <i class="ri-heart-fill heart_icon"></i> pp-lv
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.png" alt="LPL&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">Home</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">Archives</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">Categories</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">Tags</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">About</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i></p>
+  <div class="reward-box">
+    
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
