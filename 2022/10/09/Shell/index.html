@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>Shell |  LPL&#39;s Blog</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Shell"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Shell
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/10/09/Shell/" class="article-date">
+  <time datetime="2022-10-09T01:38:03.000Z" itemprop="datePublished">2022-10-09</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%85%AB%E8%82%A1%E6%96%87/">八股文</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">11 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>Shell 编程就是对一堆 Linux 命令的逻辑化处理</p>
+<span id="more"></span>
+
+<h2 id="1-Shell-编程的-Hello-World"><a href="#1-Shell-编程的-Hello-World" class="headerlink" title="1.Shell 编程的 Hello World"></a>1.Shell 编程的 Hello World</h2><p>学习任何一门编程语言第一件事就是输出 HelloWorld 了！下面我会从新建文件到 shell 代码编写来说下 Shell 编程如何输出 Hello World。</p>
+<p>(1)新建一个文件 helloworld.sh :<code>touch helloworld.sh</code>，扩展名为 sh（sh 代表 Shell）（扩展名并不影响脚本执行，见名知意就好，如果你用 php 写 shell 脚本，扩展名就用 php 好了）</p>
+<p>(2) 使脚本具有执行权限：<code>chmod +x helloworld.sh</code></p>
+<p>(3) 使用 vim 命令修改 helloworld.sh 文件：<code>vim helloworld.sh</code>(vim 文件——&gt;进入文件—–&gt;命令模式——&gt;按 i 进入编辑模式—–&gt;编辑文件 ——-&gt;按 Esc 进入底行模式—–&gt;输入**:wq&#x2F;q!** （输入 wq 代表写入内容并退出，即保存；输入 q!代表强制退出不保存。）)</p>
+<p>helloworld.sh 内容如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment">#第一个shell小程序,echo 是linux中的输出命令。</span></span><br><span class="line"><span class="built_in">echo</span>  <span class="string">&quot;helloworld!&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>shell 中 # 符号表示注释。<strong>shell 的第一行比较特殊，一般都会以#!开始来指定使用的 shell 类型。在 linux 中，除了 bash shell 以外，还有很多版本的 shell， 例如 zsh、dash 等等…不过 bash shell 还是我们使用最多的。</strong></p>
+<p>(4) 运行脚本:<code>./helloworld.sh</code> 。（注意，一定要写成 <code>./helloworld.sh</code> ，而不是 <code>helloworld.sh</code> ，运行其它二进制的程序也一样，直接写 <code>helloworld.sh</code> ，linux 系统会去 PATH 里寻找有没有叫 helloworld.sh 的，而只有 &#x2F;bin, &#x2F;sbin, &#x2F;usr&#x2F;bin，&#x2F;usr&#x2F;sbin 等在 PATH 里，你的当前目录通常不在 PATH 里，所以写成 <code>helloworld.sh</code> 是会找不到命令的，要用<code>./helloworld.sh</code> 告诉系统说，就在当前目录找。）</p>
+<h2 id="2-Shell-编程中的变量介绍"><a href="#2-Shell-编程中的变量介绍" class="headerlink" title="2.Shell 编程中的变量介绍"></a>2.Shell 编程中的变量介绍</h2><p><strong>Shell 编程中一般分为三种变量：</strong></p>
+<ol>
+<li><strong>我们自己定义的变量（自定义变量）:</strong> 仅在当前 Shell 实例中有效，其他 Shell 启动的程序不能访问局部变量。</li>
+<li><strong>Linux 已定义的环境变量</strong>（环境变量， 例如：<code>PATH</code>, <code>HOME</code> 等…, 这类变量我们可以直接使用），使用 <code>env</code> 命令可以查看所有的环境变量，而 set 命令既可以查看环境变量也可以查看自定义变量。</li>
+<li><strong>Shell 变量</strong> ：Shell 变量是由 Shell 程序设置的特殊变量。Shell 变量中有一部分是环境变量，有一部分是局部变量，这些变量保证了 Shell 的正常运行</li>
+</ol>
+<p><strong>常用的环境变量:</strong></p>
+<blockquote>
+<p>PATH 决定了 shell 将到哪些目录中寻找命令或程序<br>HOME 当前用户主目录<br>HISTSIZE 　历史记录数<br>LOGNAME 当前用户的登录名<br>HOSTNAME 　指主机的名称<br>SHELL 当前用户 Shell 类型<br>LANGUAGE 　语言相关的环境变量，多语言可以修改此环境变量<br>MAIL 　当前用户的邮件存放目录<br>PS1 　基本提示符，对于 root 用户是#，对于普通用户是$</p>
+</blockquote>
+<p><strong>Shell 编程中的变量名的命名的注意事项：</strong></p>
+<ul>
+<li>命名只能使用英文字母，数字和下划线，首个字符不能以数字开头，但是可以使用下划线（_）开头。</li>
+<li>中间不能有空格，可以使用下划线（_）。</li>
+<li>不能使用标点符号。</li>
+<li>不能使用 bash 里的关键字（可用 help 命令查看保留关键字）。</li>
+</ul>
+<h2 id="3-Shell-字符串"><a href="#3-Shell-字符串" class="headerlink" title="3.Shell 字符串"></a>3.Shell 字符串</h2><p><strong>字符串操作：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">name=<span class="string">&quot;SnailClimb&quot;</span></span><br><span class="line"><span class="comment"># 使用双引号拼接</span></span><br><span class="line">greeting=<span class="string">&quot;hello, &quot;</span><span class="variable">$name</span><span class="string">&quot; !&quot;</span></span><br><span class="line">greeting_1=<span class="string">&quot;hello, <span class="variable">$&#123;name&#125;</span> !&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$greeting</span>  <span class="variable">$greeting_1</span></span><br><span class="line"><span class="comment"># 使用单引号拼接</span></span><br><span class="line">greeting_2=<span class="string">&#x27;hello, &#x27;</span><span class="variable">$name</span><span class="string">&#x27; !&#x27;</span></span><br><span class="line">greeting_3=<span class="string">&#x27;hello, $&#123;name&#125; !&#x27;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$greeting_2</span>  <span class="variable">$greeting_3</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#获取字符串长度</span></span><br><span class="line"><span class="comment"># 第一种方式</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;#name&#125;</span> <span class="comment">#输出 10</span></span><br><span class="line"><span class="comment"># 第二种方式</span></span><br><span class="line"><span class="built_in">expr</span> length <span class="string">&quot;<span class="variable">$name</span>&quot;</span></span><br><span class="line"><span class="comment">#使用 expr 命令时，表达式中的运算符左右必须包含空格，如果不包含空格，将会输出表达式本身:</span></span><br><span class="line"><span class="built_in">expr</span> 5+6    // 直接输出 5+6</span><br><span class="line"><span class="built_in">expr</span> 5 + 6       // 输出 11</span><br><span class="line"><span class="comment">#对于某些运算符，还需要我们使用符号\进行转义，否则就会提示语法错误。</span></span><br><span class="line"><span class="built_in">expr</span> 5 * 6       // 输出错误</span><br><span class="line"><span class="built_in">expr</span> 5 \* 6      // 输出30<span class="string">&quot;;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#截取子字符串:</span></span><br><span class="line"><span class="string">#简单的字符串截取：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#从字符串第 1 个字符开始往后截取 10 个字符</span></span><br><span class="line"><span class="string">str=&quot;</span>SnailClimb is a great man<span class="string">&quot;</span></span><br><span class="line"><span class="string">echo <span class="variable">$&#123;str:0:10&#125;</span> #输出:SnailClimb</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#根据表达式截取：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">var=&quot;</span>https://www.runoob.com/linux/linux-shell-variable.html<span class="string">&quot;</span></span><br><span class="line"><span class="string"># %表示删除从后匹配, 最短结果</span></span><br><span class="line"><span class="string"># %%表示删除从后匹配, 最长匹配结果</span></span><br><span class="line"><span class="string"># #表示删除从头匹配, 最短结果</span></span><br><span class="line"><span class="string"># ##表示删除从头匹配, 最长匹配结果</span></span><br><span class="line"><span class="string"># 注: *为通配符, 意为匹配任意数量的任意字符</span></span><br><span class="line"><span class="string">s1=<span class="variable">$&#123;var%%t*&#125;</span> #h</span></span><br><span class="line"><span class="string">s2=<span class="variable">$&#123;var%t*&#125;</span>  #https://www.runoob.com/linux/linux-shell-variable.h</span></span><br><span class="line"><span class="string">s3=<span class="variable">$&#123;var%%.*&#125;</span> #http://www</span></span><br><span class="line"><span class="string">s4=<span class="variable">$&#123;var#*/&#125;</span>  #/www.runoob.com/linux/linux-shell-variable.html</span></span><br><span class="line"><span class="string">s5=<span class="variable">$&#123;var##*/&#125;</span> #linux-shell-variable.html</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="4-Shell-数组"><a href="#4-Shell-数组" class="headerlink" title="4.Shell 数组"></a>4.Shell 数组</h2><p>bash 支持一维数组（不支持多维数组），并且没有限定数组的大小。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#数组操作</span></span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line">array=(1 2 3 4 5);</span><br><span class="line"><span class="comment"># 获取数组长度</span></span><br><span class="line">length=<span class="variable">$&#123;#array[@]&#125;</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">length2=<span class="variable">$&#123;#array[*]&#125;</span></span><br><span class="line"><span class="comment">#输出数组长度</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$length</span> <span class="comment">#输出：5</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$length2</span> <span class="comment">#输出：5</span></span><br><span class="line"><span class="comment"># 输出数组第三个元素</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;array[2]&#125;</span> <span class="comment">#输出：3</span></span><br><span class="line"><span class="built_in">unset</span> array[1]<span class="comment"># 删除下标为1的元素也就是删除第二个元素</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="variable">$&#123;array[@]&#125;</span>;<span class="keyword">do</span> <span class="built_in">echo</span> <span class="variable">$i</span> ;<span class="keyword">done</span> <span class="comment"># 遍历数组，输出： 1 3 4 5</span></span><br><span class="line"><span class="built_in">unset</span> array; <span class="comment"># 删除数组中的所有元素</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="variable">$&#123;array[@]&#125;</span>;<span class="keyword">do</span> <span class="built_in">echo</span> <span class="variable">$i</span> ;<span class="keyword">done</span> <span class="comment"># 遍历数组，数组元素为空，没有任何输出内容</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="5-Shell-基本运算符"><a href="#5-Shell-基本运算符" class="headerlink" title="5.Shell 基本运算符"></a>5.Shell 基本运算符</h2><h3 id="5-1-算数运算符"><a href="#5-1-算数运算符" class="headerlink" title="5.1 算数运算符"></a>5.1 算数运算符</h3><img src="/2022/10/09/Shell/4937342.jpg" class="">
+
+<h3 id="5-2-关系运算符"><a href="#5-2-关系运算符" class="headerlink" title="5.2 关系运算符"></a>5.2 关系运算符</h3><p>关系运算符只支持数字，不支持字符串，除非字符串的值是数字。</p>
+<img src="/2022/10/09/Shell/64391380.jpg" class="">
+
+<h3 id="5-3-逻辑运算符"><a href="#5-3-逻辑运算符" class="headerlink" title="5.3 逻辑运算符"></a>5.3 逻辑运算符</h3><img src="/2022/10/09/Shell/60545848-1660015151549.jpg" class="">
+
+<h3 id="5-4-布尔运算符"><a href="#5-4-布尔运算符" class="headerlink" title="5.4 布尔运算符"></a>5.4 布尔运算符</h3><img src="/2022/10/09/Shell/93961425.jpg" class="">
+
+<h3 id="5-5-字符串运算符"><a href="#5-5-字符串运算符" class="headerlink" title="5.5 字符串运算符"></a>5.5 字符串运算符</h3><img src="/2022/10/09/Shell/309094.jpg" class="">
+
+<h3 id="5-6-文件相关运算符"><a href="#5-6-文件相关运算符" class="headerlink" title="5.6 文件相关运算符"></a>5.6 文件相关运算符</h3><img src="/2022/10/09/Shell/60359774.jpg" class="">
+
+<p>假如我们定义好了一个文件路径<code>file=&quot;/usr/learnshell/test.sh&quot;</code> 如果我们想判断这个文件是否可读，可以这样<code>if [ -r $file ]</code></p>
+<h2 id="6-shell-流程控制"><a href="#6-shell-流程控制" class="headerlink" title="6.shell 流程控制"></a>6.shell 流程控制</h2><h3 id="6-1-if-条件语句"><a href="#6-1-if-条件语句" class="headerlink" title="6.1 if 条件语句"></a>6.1 if 条件语句</h3><p>简单的 if else-if else 的条件语句示例</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">a=3;</span><br><span class="line">b=9;</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$a</span> -eq <span class="variable">$b</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">   <span class="built_in">echo</span> <span class="string">&quot;a 等于 b&quot;</span></span><br><span class="line"><span class="keyword">elif</span> [ <span class="variable">$a</span> -gt <span class="variable">$b</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">   <span class="built_in">echo</span> <span class="string">&quot;a 大于 b&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">   <span class="built_in">echo</span> <span class="string">&quot;a 小于 b&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a 小于 b</span><br></pre></td></tr></table></figure>
+
+<p>相信大家通过上面的示例就已经掌握了 shell 编程中的 if 条件语句。不过，还要提到的一点是，不同于我们常见的 Java 以及 PHP 中的 if 条件语句，shell if 条件语句中不能包含空语句也就是什么都不做的语句。</p>
+<h3 id="6-2-for-循环语句"><a href="#6-2-for-循环语句" class="headerlink" title="6.2 for 循环语句"></a>6.2 for 循环语句</h3><p>通过下面三个简单的示例认识 for 循环语句最基本的使用，实际上 for 循环语句的功能比下面你看到的示例展现的要大得多。</p>
+<p><strong>输出当前列表中的数据：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> loop <span class="keyword">in</span> 1 2 3 4 5</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;The value is: <span class="variable">$loop</span>&quot;</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>产生 10 个随机数：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> &#123;0..9&#125;;</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">   <span class="built_in">echo</span> <span class="variable">$RANDOM</span>;</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>输出 1 到 5:</strong></p>
+<p>通常情况下 shell 变量调用需要加 $,但是 for 的 (()) 中不需要,下面来看一个例子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="keyword">for</span>((i=1;i&lt;=5;i++));</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="variable">$i</span>;</span><br><span class="line"><span class="keyword">done</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-while-语句"><a href="#6-3-while-语句" class="headerlink" title="6.3 while 语句"></a>6.3 while 语句</h3><p><strong>基本的 while 循环语句：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">int=1</span><br><span class="line"><span class="keyword">while</span>(( <span class="variable">$int</span>&lt;=5 ))</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="variable">$int</span></span><br><span class="line">    <span class="built_in">let</span> <span class="string">&quot;int++&quot;</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>while 循环可用于读取键盘信息：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;按下 &lt;CTRL-D&gt; 退出&#x27;</span></span><br><span class="line"><span class="built_in">echo</span> -n <span class="string">&#x27;输入你最喜欢的电影: &#x27;</span></span><br><span class="line"><span class="keyword">while</span> <span class="built_in">read</span> FILM</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;是的！<span class="variable">$FILM</span> 是一个好电影&quot;</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>输出内容:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">按下 &lt;CTRL-D&gt; 退出</span><br><span class="line">输入你最喜欢的电影: 变形金刚</span><br><span class="line">是的！变形金刚 是一个好电影</span><br></pre></td></tr></table></figure>
+
+<p><strong>无限循环：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="literal">true</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">command</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="7-shell-函数"><a href="#7-shell-函数" class="headerlink" title="7.shell 函数"></a>7.shell 函数</h2><h3 id="7-1-不带参数没有返回值的函数"><a href="#7-1-不带参数没有返回值的函数" class="headerlink" title="7.1 不带参数没有返回值的函数"></a>7.1 不带参数没有返回值的函数</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="function"><span class="title">hello</span></span>()&#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;这是我的第一个 shell 函数!&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;-----函数开始执行-----&quot;</span></span><br><span class="line">hello</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;-----函数执行完毕-----&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-----函数开始执行-----</span><br><span class="line">这是我的第一个 shell 函数!</span><br><span class="line">-----函数执行完毕-----</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-1-有返回值的函数"><a href="#7-1-有返回值的函数" class="headerlink" title="7.1 有返回值的函数"></a>7.1 有返回值的函数</h3><p><strong>输入两个数字之后相加并返回结果：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="function"><span class="title">funWithReturn</span></span>()&#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;输入第一个数字: &quot;</span></span><br><span class="line">    <span class="built_in">read</span> aNum</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;输入第二个数字: &quot;</span></span><br><span class="line">    <span class="built_in">read</span> anotherNum</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;两个数字分别为 <span class="variable">$aNum</span> 和 <span class="variable">$anotherNum</span> !&quot;</span></span><br><span class="line">    <span class="built_in">return</span> $((<span class="variable">$aNum</span>+<span class="variable">$anotherNum</span>))</span><br><span class="line">&#125;</span><br><span class="line">funWithReturn</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;输入的两个数字之和为 $?&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">输入第一个数字:</span><br><span class="line">1</span><br><span class="line">输入第二个数字:</span><br><span class="line">2</span><br><span class="line">两个数字分别为 1 和 2 !</span><br><span class="line">输入的两个数字之和为 3</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-3-带参数的函数"><a href="#7-3-带参数的函数" class="headerlink" title="7.3 带参数的函数"></a>7.3 带参数的函数</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="function"><span class="title">funWithParam</span></span>()&#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;第一个参数为 <span class="variable">$1</span> !&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;第二个参数为 <span class="variable">$2</span> !&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;第十个参数为 <span class="variable">$10</span> !&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;第十个参数为 <span class="variable">$&#123;10&#125;</span> !&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;第十一个参数为 <span class="variable">$&#123;11&#125;</span> !&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;参数总数有 <span class="variable">$#</span> 个!&quot;</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;作为一个字符串输出所有参数 $* !&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">funWithParam 1 2 3 4 5 6 7 8 9 34 73</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">第一个参数为 1 !</span><br><span class="line">第二个参数为 2 !</span><br><span class="line">第十个参数为 10 !</span><br><span class="line">第十个参数为 34 !</span><br><span class="line">第十一个参数为 73 !</span><br><span class="line">参数总数有 11 个!</span><br><span class="line">作为一个字符串输出所有参数 1 2 3 4 5 6 7 8 9 34 73 !</span><br></pre></td></tr></table></figure>
+
+<h2 id="8-常用集合的API"><a href="#8-常用集合的API" class="headerlink" title="8.常用集合的API"></a>8.常用集合的API</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line">数组 List&lt;Integer&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">•	add(value) add(<span class="type">int</span> index, <span class="type">int</span> value)</span><br><span class="line">•	get(index) indexOf(value) lastIndexOf(value)</span><br><span class="line">•	set(index, value)</span><br><span class="line">•	size()</span><br><span class="line">•	isEmpty()</span><br><span class="line">•	remove(<span class="type">int</span> index) clear()</span><br><span class="line">•	toArray()</span><br><span class="line">   </span><br><span class="line">双向链表 List&lt;Integer&gt; list = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">•	插入 offerFirst(value) offerLast(value) <span class="comment">// 返回true/false</span></span><br><span class="line">•	取值 peekFirst() peekLast()</span><br><span class="line">•	删除 pollFirst() pollLast()</span><br><span class="line">       </span><br><span class="line">栈 Deque&lt;Integer&gt; stack = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;Integer&gt;();</span><br><span class="line">•	push(value)</span><br><span class="line">•	peek()</span><br><span class="line">•	poll()</span><br><span class="line">        </span><br><span class="line">队列 Queue&lt;Integer&gt; queue = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;();</span><br><span class="line">•	offer()</span><br><span class="line">•	peek()</span><br><span class="line">•	poll() </span><br><span class="line">    </span><br><span class="line">哈希表 Map&lt;Integer, Character&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">•	map.put(key, value)</span><br><span class="line">•	map.get(key) map.getOrDefault(key, defaultValue)</span><br><span class="line">•	map.remove(key)</span><br><span class="line">•	map.size()</span><br><span class="line">•	map.isEmpty()</span><br><span class="line">•	map.containsKey(key)</span><br><span class="line">•	map.keySet() map.values() map.entrySet()</span><br><span class="line">•	map.clear()</span><br><span class="line">      </span><br><span class="line">红黑树 TreeSet&lt;Integer&gt; treeSet = <span class="keyword">new</span> <span class="title class_">TreeSet</span>&lt;&gt;();</span><br><span class="line">•	add(value)</span><br><span class="line">•	remove(value)</span><br><span class="line">•	floor(num) <span class="comment">// 小于等于num的最大值</span></span><br><span class="line">•	ceiling(num) <span class="comment">// 大于等于num的最小值</span></span><br><span class="line">      </span><br><span class="line">优先队列/堆 Queue&lt;ListNode&gt; pq = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;((o1, o2) -&gt; o1.val - o2.val); <span class="comment">// 小根堆</span></span><br><span class="line">•	offer(value)</span><br><span class="line">•	peek()</span><br><span class="line">•	poll()</span><br><span class="line">      </span><br><span class="line">集合 Set&lt;Integer&gt; set = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">•	add()</span><br><span class="line">•	contains(value)</span><br><span class="line">•	remove()</span><br><span class="line">     </span><br><span class="line">保持插入顺序的双向链表哈希表 LinkedHashMap&lt;Integer, Integer&gt; cache = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;&gt;();</span><br><span class="line">•	有HashMap和LinkedList的特性</span><br><span class="line">    </span><br><span class="line">Arrays</span><br><span class="line">•	Arrays.sort();</span><br><span class="line">•	Arrays.fill();</span><br><span class="line">•	Arrays.asList();</span><br><span class="line">•	Arrays.binarySearch(<span class="type">int</span>[] a, <span class="type">int</span> key); <span class="comment">// 二分查找 return int</span></span><br><span class="line">•	Arrays.compare(<span class="type">int</span>[] a, <span class="type">int</span>[] b);</span><br><span class="line">•	Arrays.copyOf(<span class="type">int</span>[] a, <span class="type">int</span> newLength);</span><br><span class="line">•	Arrays.copyOfRange(<span class="type">int</span>[] a, <span class="type">int</span> start, <span class="type">int</span> end);</span><br><span class="line"></span><br><span class="line">String的API</span><br><span class="line">s.trim();</span><br><span class="line">s.compareTo(t);</span><br><span class="line">System.out.println(s.strip());</span><br><span class="line">s.substring(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line">s.equals(t);</span><br><span class="line">s.endsWith(t);</span><br><span class="line">s.indexOf(t);</span><br><span class="line">s.isEmpty();</span><br><span class="line">s.lastIndexOf(t);</span><br><span class="line">s.repeat(<span class="number">3</span>);</span><br><span class="line">s.replace(<span class="string">&#x27;1&#x27;</span>,<span class="string">&#x27;2&#x27;</span>);</span><br><span class="line">s.replaceAll(<span class="string">&quot;aa&quot;</span>, <span class="string">&quot;bb&quot;</span>);</span><br><span class="line">s.replaceFirst(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>);</span><br><span class="line">s.concat(t);</span><br><span class="line">s.startsWith(<span class="string">&quot;s&quot;</span>);</span><br><span class="line">s.startsWith(<span class="string">&quot;a&quot;</span>, <span class="number">3</span>);</span><br><span class="line">s.toCharArray();</span><br><span class="line">s.toUpperCase();</span><br><span class="line">s.toLowerCase();</span><br><span class="line"></span><br><span class="line">StringBuilder s;</span><br><span class="line">s.append(<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">s.insert(<span class="number">2</span>, <span class="string">&quot;dsfgh&quot;</span>);</span><br><span class="line">s.reverse();</span><br><span class="line">s.toString();</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/10/09/Shell/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/" rel="tag">Shell</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2022/10/08/%E5%8D%81%E5%A4%A7%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">十大排序算法</div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2022
+        <i class="ri-heart-fill heart_icon"></i> pp-lv
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.png" alt="LPL&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">Home</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">Archives</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">Categories</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">Tags</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">About</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i></p>
+  <div class="reward-box">
+    
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
