@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>操作系统 |  LPL&#39;s Blog</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-操作系统"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  操作系统
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" class="article-date">
+  <time datetime="2022-10-10T02:50:20.000Z" itemprop="datePublished">2022-10-10</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%85%AB%E8%82%A1%E6%96%87/">八股文</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">14.9k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">51 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="1-手写死锁"><a href="#1-手写死锁" class="headerlink" title="1.手写死锁"></a>1.手写死锁</h2><span id="more"></span>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DeathLock</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">Object</span> <span class="variable">garlic</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">    <span class="keyword">static</span> <span class="type">Object</span> <span class="variable">vinegar</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">    <span class="type">int</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (flag == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (vinegar) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">500</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;<span class="keyword">return</span>;&#125;</span><br><span class="line">                System.out.println(<span class="string">&quot;ThreadA... wait B.&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (garlic) &#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;B come...&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (flag == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (garlic) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">500</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;&#125;</span><br><span class="line">                System.out.println(<span class="string">&quot;ThreadB... wait A.&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (vinegar) &#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;A come...&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">DeathLock</span> <span class="variable">threadA</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DeathLock</span>();</span><br><span class="line">        <span class="type">DeathLock</span> <span class="variable">threadB</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DeathLock</span>();</span><br><span class="line">        threadA.flag = <span class="number">0</span>;</span><br><span class="line">        threadB.flag = <span class="number">1</span>;</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">tA</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(threadA);</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">tB</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(threadB);</span><br><span class="line">        tA.start();</span><br><span class="line">        tB.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-进程和线程通信"><a href="#2-进程和线程通信" class="headerlink" title="2.进程和线程通信"></a>2.进程和线程通信</h2><h3 id="2-1进程间的通信方式（同步方式）"><a href="#2-1进程间的通信方式（同步方式）" class="headerlink" title="2.1进程间的通信方式（同步方式）"></a>2.1进程间的通信方式（同步方式）</h3><p>​	要注意这里的同步并不是指同时进行的意思，而是按照先后顺序依次进行。 </p>
+<p>首先了解一下同步与互斥的概念：</p>
+<p>同步：多个进程因为合作产生的直接制约关系，使得进程有一定的先后执行关系； </p>
+<p>互斥：多个进程在同一时刻只有一个进程能进入临界区。</p>
+<p><strong>进程同步和通信的关系</strong></p>
+<p><strong>进程同步</strong>就是控制多个进程按一定顺序执行，而<strong>进程间通信</strong>（IPC）是在进程间传输信息。它们之间的关系是：进程通信是一种手段，而进程同步是一种目的，为了能够达到进程同步的目的，需要让进程进行通信，传输一些进程同步所需要的信息。借用知乎某佬的一句话：<br>不要当那种考试考傻了的书呆子，把“同步”和“通信”的概念分得那么清楚，能通信就一定是一种同步机制，这是显而易见的。</p>
+<p>所以面试官问你进程同步的方式时，他的意思其实是让你回答进程间的通信方式。常用的进程通信方式如下：</p>
+<ul>
+<li><p><code>管道/匿名管道(Pipes)</code> ：用于具有亲缘关系的<strong>父子进程间</strong>或者兄弟进程之间的通信，<strong>管道就是一只存在于内存中的文件</strong>。</p>
+</li>
+<li><p><code>有名管道(Names Pipes)</code> : 匿名管道由于没有名字，只能用于亲缘关系的进程间通信。为了克服这个缺点，提出了有名管道。有名管道严格遵循先进先出(first in first out)。有名管道以磁盘文件的方式存在，可以实现本机<strong>任意两个进程通信</strong>，<strong>存在于实际的磁盘介质或者文件系统</strong>。</p>
+</li>
+<li><p><code>共享内存(Shared memory)</code> ：使得多个进程可以访问同一块内存空间，不同进程可以及时看到对方进程中对共享内存中数据的更新。这种方式需要依靠某种同步操作，如互斥锁和信号量等。可以说这是最有用的进程间通信方式。</p>
+</li>
+<li><p><code>信号(Signal)</code> ：信号是一种比较复杂的通信方式，用于通知接收进程某个事件已经发生；是进程通信机制中唯一的<strong>异步</strong>通信机制。</p>
+</li>
+<li><p><code>信号量(Semaphores)</code> ：信号量是一个计数器，用于多进程对共享数据的访问，信号量的意图在于进程间同步。这种通信方式主要用于解决与同步相关的问题并避免竞争条件。</p>
+</li>
+<li><p><code>消息队列(Message Queuing)</code> ：消息队列是消息的链表,具有特定的格式，存放在内存中并由消息队列标识符标识。<strong>存放在内存中的消息的链表，而消息本质上是用户自定义的数据结构</strong></p>
+<p>管道和消息队列的通信数据都是先进先出的原则。<strong>与管道（</strong>无名管道：只存在于内存中的文件；命名管道：存在于实际的磁盘介质或者文件系统）<strong>不同的是消息队列存放在内核中</strong>，只有在内核重启(即，操作系统重启)或者显式地删除一个消息队列时，该消息队列才会被真正的删除。<strong>消息队列可以实现消息的随机查询，消息不一定要以先进先出的次序读取，也可以按消息的类型读取。</strong>比 FIFO 更有优势。消息队列克服了信号承载信息量少，<strong>管道只能承载无格式字节流</strong>以及缓冲区大小受限等缺点。</p>
+<p>用户进程写入数据到内存中的消息队列时，会发生从用户态<strong>拷贝</strong>数据到内核态的过程；同样的，另一个用户进程读取内存中的消息数据时，会发生从内核态拷贝数据到用户态的过程。因此，<strong>如果数据量较大，使用消息队列就会造成频繁的系统调用，也就是需要消耗更多的时间以便内核介入</strong>。</p>
+</li>
+<li><p><code>套接字(Sockets)</code> : 可用于不同主机之间的进程间通信。</p>
+</li>
+</ul>
+<h3 id="2-2-线程间的通信方式（同步方式）"><a href="#2-2-线程间的通信方式（同步方式）" class="headerlink" title="2.2 线程间的通信方式（同步方式）"></a>2.2 线程间的通信方式（同步方式）</h3><p>线程同步是两个或多个共享关键资源的线程的并发执行。应该同步线程以避免关键的资源使用冲突。操作系统一般有下面三种线程同步的方式：</p>
+<ul>
+<li><code>互斥量(Mutex)</code>：采用互斥对象机制，只有拥有互斥对象的线程才有访问公共资源的权限。因为互斥对象只有一个，所以可以保证公共资源不会被多个线程同时访问。比如 Java 中的 synchronized 关键词和各种 Lock 都是这种机制。</li>
+<li><code>信号量(Semaphore)</code> ：它允许同一时刻多个线程访问同一资源，但是需要控制同一时刻访问此资源的最大线程数量。</li>
+<li><code>事件(Event)</code> :Wait&#x2F;Notify：通过通知操作的方式来保持多线程同步，还可以方便的实现多线程优先级的比较操作。</li>
+</ul>
+<h2 id="3-I-x2F-O模型"><a href="#3-I-x2F-O模型" class="headerlink" title="3.I&#x2F;O模型"></a>3.I&#x2F;O模型</h2><h3 id="3-1-从TCP发送数据的流程说起"><a href="#3-1-从TCP发送数据的流程说起" class="headerlink" title="3.1 从TCP发送数据的流程说起"></a>3.1 从TCP发送数据的流程说起</h3><p>要深入的理解各种IO模型，那么必须先了解下产生各种IO的原因是什么，要知道这其中的本质问题那么我们就必须要知一条消息是如何从过一个人发送到另外一个人的；</p>
+<p>以两个应用程序通讯为例，我们来了解一下当“A”向”B” 发送一条消息，简单来说会经过如下流程：</p>
+<p><strong>第一步</strong>：应用A把消息发送到 TCP发送缓冲区。</p>
+<p><strong>第二步：</strong> TCP发送缓冲区再把消息发送出去，经过网络传递后，消息会发送到B服务器的TCP接收缓冲区。</p>
+<p><strong>第三步：</strong>B再从TCP接收缓冲区去读取属于自己的数据。</p>
+<img src="/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-5311954c22d15ca91e47ab52168b7ada_720w.jpg" class="">
+
+<p>根据上图我们基本上了解消息发送要经过应用A、应用A对应服务器的TCP发送缓冲区、经过网络传输后消息发送到了应用B对应服务器TCP接收缓冲区、然后最终B应用读取到消息。</p>
+<p>如果理解了上面的消息发送流程，那么我们下面开始进入文章的主题；</p>
+<hr>
+<h3 id="3-2-阻塞IO-非阻塞IO"><a href="#3-2-阻塞IO-非阻塞IO" class="headerlink" title="3.2 阻塞IO |非阻塞IO"></a>3.2 阻塞IO |非阻塞IO</h3><p>我们把视角切换到上面图中的第三步， 也就是应用B从TCP缓冲区中读取数据。</p>
+<img src="/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-cdd47940a292d8c4686570c7e128c235_720w.jpg" class="">
+
+<p><strong>思考一个问题：</strong></p>
+<p>因为应用之间发送消息是间断性的，也就是说在上图中TCP缓冲区还没有接收到属于应用B该读取的消息时，那么此时应用B向TCP缓冲区发起读取申请，TCP接收缓冲区是应该马上告诉应用B现在没有你的数据，还是说让应用B在这里等着，直到有数据再把数据交给应用B。</p>
+<p>把这个问题应用到第一个步骤也是一样，应用A在向TCP发送缓冲区发送数据时，如果TCP发送缓冲区已经满了，那么是告诉应用A现在没空间了，还是让应用A等待着，等TCP发送缓冲区有空间了再把应用A的数据访拷贝到发送缓冲区。</p>
+<h4 id="什么是阻塞IO"><a href="#什么是阻塞IO" class="headerlink" title="什么是阻塞IO"></a><strong>什么是阻塞IO</strong></h4><p>如果上面的问题你已经思考过了，那么其实你已经明白了什么是阻塞IO了，所谓阻塞IO就是当应用B发起读取数据申请时，在内核数据没有准备好之前，应用B会一直处于等待数据状态，直到内核把数据准备好了交给应用B才结束。</p>
+<p><strong>术语描述</strong>：在应用调用recvfrom读取数据时，其系统调用直到数据包到达且被复制到应用缓冲区中或者发送错误时才返回，在此期间一直会等待，进程从调用到返回这段时间内都是被阻塞的称为阻塞IO；</p>
+<p><strong>流程：</strong></p>
+<p>1、应用进程向内核发起recfrom读取数据。</p>
+<p>2、准备数据报（应用进程阻塞）。</p>
+<p>3、将数据从内核负责到应用空间。</p>
+<p>4、复制完成后，返回成功提示。</p>
+<img src="/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-abef476a75afe52193be9577dcbcb88a_720w.jpg" class="">
+
+<h4 id="什么是非阻塞IO"><a href="#什么是非阻塞IO" class="headerlink" title="什么是非阻塞IO"></a><strong>什么是非阻塞IO</strong></h4><p>我敢保证如果你已经理解了阻塞IO，那么必定已经知道了什么是非阻塞IO。按照上面的思路，所谓非阻塞IO就是当应用B发起读取数据申请时，如果内核数据没有准备好会即刻告诉应用B，不会让B在这里等待。</p>
+<p><strong>术语</strong>：非阻塞IO是在应用调用recvfrom读取数据时，如果该缓冲区没有数据的话，就会直接返回一个EWOULDBLOCK错误，不会让应用一直等待中。在没有数据的时候会即刻返回错误标识，那也意味着如果应用要读取数据就需要不断的调用recvfrom请求，直到读取到它数据要的数据为止。</p>
+<p><strong>流程：</strong></p>
+<p>1、应用进程向内核发起recvfrom读取数据。</p>
+<p>2、没有数据报准备好，即刻返回EWOULDBLOCK错误码。</p>
+<p>3、应用进程向内核发起recvfrom读取数据。</p>
+<p>4、已有数据包准备好就进行一下 步骤，否则还是返回错误码。</p>
+<p>5、将数据从内核拷贝到用户空间。</p>
+<p>6、完成后，返回成功提示。</p>
+<hr>
+<h3 id="3-3-IO复用模型"><a href="#3-3-IO复用模型" class="headerlink" title="3.3 IO复用模型"></a><strong>3.3 IO复用模型</strong></h3><p>如果你已经明白了非阻塞IO的工作模式，那么接下来我们继续了解IO复用模型的产生原因和思路。</p>
+<p><strong>思考一个问题：</strong></p>
+<p>我们还是把视角放到应用B从TCP缓冲区中读取数据这个环节来。如果在并发的环境下，可能会N个人向应用B发送消息，这种情况下我们的应用就必须创建多个线程去读取数据，每个线程都会自己调用recvfrom 去读取数据。那么此时情况可能如下图：</p>
+<img src="/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-529734ac694c4da96ac78eeebd7deb6b_720w.jpg" class="">
+
+<p>如上图一样，并发情况下服务器很可能一瞬间会收到几十上百万的请求，这种情况下应用B就需要创建几十上百万的线程去读取数据，同时又因为应用线程是不知道什么时候会有数据读取，为了保证消息能及时读取到，那么这些线程自己必须不断的向内核发送recvfrom 请求来读取数据；</p>
+<p>那么问题来了，这么多的线程不断调用recvfrom 请求数据，先不说服务器能不能扛得住这么多线程，就算扛得住那么很明显这种方式是不是太浪费资源了，线程是我们操作系统的宝贵资源，大量的线程用来去读取数据了，那么就意味着能做其它事情的线程就会少。</p>
+<p>所以，有人就提出了一个思路，能不能提供一种方式，可以由一个线程监控多个网络请求（<strong>我们后面将称为fd文件描述符，linux系统把所有网络请求以一个fd来标识</strong>），这样就可以只需要一个或几个线程就可以完成数据状态询问的操作，当有数据准备就绪之后再分配对应的线程去读取数据，这么做就可以节省出大量的线程资源出来，这个就是IO复用模型的思路。</p>
+<img src="/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-2c65fd3534e58d3a54cdeae778a31446_720w.jpg" class="">
+
+<p>正如上图，IO复用模型的思路就是系统提供了一种函数可以同时监控多个fd的操作，这个函数就是我们常说到的select、poll、epoll函数，有了这个函数后，应用线程通过调用select函数就可以同时监控多个fd，select函数监控的fd中只要有任何一个数据状态准备就绪了，select函数就会返回可读状态，这时询问线程再去通知处理数据的线程，对应线程此时再发起recvfrom请求去读取数据。</p>
+<p><strong>术语描述：</strong>进程通过将一个或多个fd传递给select，阻塞在select操作上，select帮我们侦测多个fd是否准备就绪，当有fd准备就绪时，select返回数据可读状态，应用程序再调用recvfrom读取数据。</p>
+<img src="/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-260e80cbec13cbcc677779690f6ab2fa_720w.jpg" class="">
+
+<p><strong>总结：</strong>复用IO的基本思路就是通过slect或poll、epoll 来监控多fd ，来达到不必为每个fd创建一个对应的监控线程，从而减少线程资源创建的目的。</p>
+<h4 id="select、poll、epoll"><a href="#select、poll、epoll" class="headerlink" title="select、poll、epoll"></a><strong>select、poll、epoll</strong></h4><p>I&#x2F;O多路复用是指：通过一种机制，可以<strong>监视多个描述符</strong>，一旦某个描述符就绪（一般是读就绪或者写就绪），能够通知程序进行相应的读写操作。</p>
+<p><strong>简述</strong>：</p>
+<p><strong>(1)select&#x3D;&#x3D;&gt;时间复杂度O(n)</strong></p>
+<p>它仅仅知道了，有I&#x2F;O事件发生了，却并不知道是哪那几个流（可能有一个，多个，甚至全部），我们只能无差别轮询所有流，找出能读出数据，或者写入数据的流，对他们进行操作。所以select具有O(n)的无差别轮询复杂度，同时处理的流越多，无差别轮询时间就越长。</p>
+<p><strong>(2)poll&#x3D;&#x3D;&gt;时间复杂度O(n)</strong></p>
+<p>poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态， 但是它没<strong>有最大连接数的限制</strong>，原因是它是基于链表来存储的.</p>
+<p><strong>(3)epoll&#x3D;&#x3D;&gt;时间复杂度O(1)</strong></p>
+<p>epoll可以理解为event poll，不同于忙轮询和无差别轮询，epoll会把哪个流发生了怎样的I&#x2F;O事件通知我们。所以我们说epoll实际上是事件驱动（每个事件关联上fd）的，此时我们对这些流的操作都是有意义的。（复杂度降低到了O(1)）</p>
+<h5 id="1）select"><a href="#1）select" class="headerlink" title="1）select"></a>1）select</h5><p><strong>它通过一个select()系统调用来监视多个文件描述符的数组</strong>，<strong>对socket进行扫描时是线性扫描，即采用轮询的方法，效率较低</strong>，当select()返回后，该数组中就绪的文件描述符便会被内核修改标志位，使得进程可以获得这些文件描述符从而进行后续的读写操作。</p>
+<p>select目前几乎在所有的平台上支持，其良好跨平台支持也是它的一个优点，事实上从现在看来，这也是它所剩不多的优点之一。</p>
+<p><strong>缺点</strong>：</p>
+<p>（1）每次调用select，都需要把fd集合从用户态拷贝到内核态，这个开销在fd很多时会很大</p>
+<p>（2）同时每次调用select都需要在内核遍历传递进来的所有fd，这个开销在fd很多时也很大</p>
+<p>（3）select支持的文件描述符数量太小了，默认是1024（不过可以通过修改宏定义甚至重新编译内核的方式提升这一限制）</p>
+<p>另外，select()所维护的存储大量文件描述符的数据结构，随着文件描述符数量的增大，其复制的开销也线性增长。同时，由于网络响应时间的延迟使得大 量TCP连接处于非活跃状态，但调用select()会对所有socket进行一次线性扫描，所以这也浪费了一定的开销。</p>
+<h5 id="2）poll"><a href="#2）poll" class="headerlink" title="2）poll"></a>2）poll</h5><p>poll的机制与select类似，与select在本质上没有多大差别，管理多个描述符也是进行<strong>轮询</strong>，根据描述符的状态进行处理，但是poll没有最大文件描述符数量的限制。poll和select同样存在一个缺点就是，包含大量文件描述符的数组被整体复制于用户态和内核的地址空间之间，而不论这些文件描述符是否就绪，它的开销随着文件描述符数量的增加而线性增大。</p>
+<p>另外，select()和poll()将就绪的文件描述符告诉进程后，如果进程没有对其进行IO操作，那么下次调用select()和poll()的时候 将 再次报告这些文件描述符，所以它们一般不会丢失就绪的消息，这种方式称为水平触发（Level Triggered）。</p>
+<h5 id="3）epoll"><a href="#3）epoll" class="headerlink" title="3）epoll"></a>3）epoll</h5><p><strong>epoll可以同时支持水平触发和边缘触发</strong>（Edge Triggered，只告诉进程哪些文件描述符刚刚变为就绪状态，它只说一遍，如果我们没有采取行动，那么它将不会再次告知，这种方式称为边缘触发），理论上边缘触发的性能要更高一些，但是代码实现相当复杂。</p>
+<p><strong>epoll同样只告知那些就绪的文件描述符</strong>，而且当我们调用epoll_wait()获得就绪文件描述符时，返回的不是实际的描述符，而是一个代表就绪描述符数量的值，你只需要去epoll指定的一个数组中依次取得相应数量的文件描述符即可，这里也使用了内存映射（mmap）技术，这样便彻底省掉了这些文件描述符在 系统调用时复制的开销。</p>
+<p><strong>另一个本质的改进在于epoll采用基于事件的就绪通知方式。</strong>在select&#x2F;poll 中，进程只有在调用一定的方法后，内核才对所有监视的文件描述符进行扫描，而epoll事先通过epoll_ctl()来注册一个文件描述符，一旦基于某 个文件描述符就绪时，内核会采用类似callback的回调机制，迅速激活这个文件描述符，当进程调用epoll_wait()时便得到通知。</p>
+<h5 id="4）总结"><a href="#4）总结" class="headerlink" title="4）总结"></a>4）总结</h5><p>（1）<strong>select，poll</strong>实现需要自己不断轮询所有fd集合，直到设备就绪，期间可能要睡眠和唤醒多次交替。而<strong>epoll</strong>其实也需要调用epoll_wait不断轮询就绪链表，期间也可能多次睡眠和唤醒交替，但是它是设备就绪时，调用回调函数，把就绪fd放入就绪链表中，并唤醒在epoll_wait中进入睡眠的进程。虽然都要睡眠和交替，但是<strong>select和poll</strong>在“醒着”的时候要遍历整个fd集合，而epoll在“醒着”的时候只要判断一下就绪链表是否为空就行了，这节省了大量的CPU时间。这就是回调机制带来的性能提升。</p>
+<p>（2）select，poll每次调用都要把fd集合从用户态往内核态拷贝一次，并且要把current往设备等待队列中挂一次，而epoll只要一次拷贝，而且把current往等待队列上挂也只挂一次（在epoll_wait的开始，注意这里的等待队列并不是设备等待队列，只是一个epoll内部定义的等待队列）。这也能节省不少的开销。</p>
+<hr>
+<h3 id="3-4-信号驱动IO模型"><a href="#3-4-信号驱动IO模型" class="headerlink" title="3.4 信号驱动IO模型"></a>3.4 信号驱动IO模型</h3><p>复用IO模型解决了一个线程可以监控多个fd的问题，但是select是采用轮询的方式来监控多个fd的，通过不断的轮询fd的可读状态来知道是否有可读的数据，而无脑的轮询就显得有点暴力，因为大部分情况下的轮询都是无效的，所以有人就想，能不能不要我总是去问你是否数据准备就绪，能不能我发出请求后等你数据准备好了就通知我，所以就衍生了信号驱动IO模型。</p>
+<p>于是信号驱动IO不是用循环请求询问的方式去监控数据就绪状态，而是在调用sigaction时候建立一个SIGIO的信号联系，<strong>当内核数据准备好之后再通过SIGIO信号通知线程数据准备好后的可读状态</strong>，当线程收到可读状态的信号后，此时再向内核发起recvfrom读取数据的请求，因为信号驱动IO的模型下应用线程在发出信号监控后即可返回，不会阻塞，所以这样的方式下，一个应用线程也可以同时监控多个fd。</p>
+<p>类似于下图描述：</p>
+<img src="/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-2461c8df6a154930afb4e7c345442835_720w.jpg" class="">
+
+<p><strong>术语描述：</strong>首先开启套接口信号驱动IO功能，并通过系统调用sigaction执行一个信号处理函数，此时请求即刻返回，当数据准备就绪时，就生成对应进程的SIGIO信号，通过信号回调通知应用线程调用recvfrom来读取数据。</p>
+<img src="/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-bf11a9d3c0f52da85298baa13000e5c9_720w.jpg" class="">
+
+<p><strong>总结：</strong> IO复用模型里面的select虽然可以监控多个fd了，但select其实现的本质上还是通过不断的轮询fd来监控数据状态， 因为大部分轮询请求其实都是无效的，所以信号驱动IO意在通过这种建立信号关联的方式，实现了发出请求后只需要等待数据就绪的通知即可，这样就可以避免大量无效的数据状态轮询操作。</p>
+<h3 id="3-5-异步IO"><a href="#3-5-异步IO" class="headerlink" title="3.5 异步IO"></a>3.5 异步IO</h3><p>其实经过了上面两个模型的优化，我们的效率有了很大的提升，但是我们当然不会就这样满足了，有没有更好的办法，通过观察我们发现，不管是IO复用还是信号驱动，我们要读取一个数据总是要发起两阶段的请求，<strong>第一次发送select请求，询问数据状态是否准备好，第二次发送recevform请求读取数据。</strong></p>
+<p><strong>思考一个问题：</strong></p>
+<p>也许你一开始就有一个疑问，为什么我们明明是想读取数据，什么非得要先发起一个select询问数据状态的请求，然后再发起真正的读取数据请求,能不能有一种一劳永逸的方式，我只要发送一个请求我告诉内核我要读取数据，然后我就什么都不管了，然后内核去帮我去完成剩下的所有事情？</p>
+<p>当然既然你想得出来，那么就会有人做得到，有人设计了一种方案，应用只需要向内核发送一个read 请求,告诉内核它要读取数据后即刻返回；内核收到请求后会建立一个信号联系，当数据准备就绪，内核会主动把数据从内核复制到用户空间，等所有操作都完成之后，内核会发起一个通知告诉应用，我们称这种一劳永逸的模式为异步IO模型。</p>
+<img src="/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-96009f54d89ade0d8c4001bc67395c57_720w.jpg" class="">
+
+<p><strong>术语描述：</strong> 应用告知内核启动某个操作，并让内核在整个操作完成之后，通知应用，这种模型与信号驱动模型的主要区别在于，信号驱动IO只是由内核通知我们何时可以开始下一个IO操作，而异步IO模型是由内核通知我们操作什么时候完成。</p>
+<img src="/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-5095ab1ffe868a2577bc15310d740293_720w.jpg" class="">
+
+<p><strong>总结：</strong>异步IO的优化思路是解决了应用程序需要先后发送询问请求、发送接收数据请求两个阶段的模式，在异步IO的模式下，只需要向内核发送一次请求就可以完成状态询问和数拷贝的所有操作。</p>
+<h3 id="3-6-再谈IO模型里面的同步异步"><a href="#3-6-再谈IO模型里面的同步异步" class="headerlink" title="3.6 再谈IO模型里面的同步异步"></a>3.6 再谈IO模型里面的同步异步</h3><p>我们通常会说到同步阻塞IO、同步非阻塞IO，异步IO几种术语，通过上面的内容，那么我想你现在肯定已经理解了什么是阻塞什么是非阻塞了，所谓阻塞就是发起读取数据请求的时，当数据还没准备就绪的时候，这时<strong>请求是即刻返回一个状态值，还是在这里等待数据的就绪</strong>，如果需要等待的话就是阻塞，反之如果即刻返回就是非阻塞。</p>
+<p>我们区分了阻塞和非阻塞后再来分别下同步和异步，在IO模型里面如果请求方<strong>从发起请求到数据最后完成的这一段过程中都需要自己参与（先发送一个读取请求，数据准备好了再次发起请求进行读取）</strong>，那么这种我们称为<strong>同步</strong>请求；反之，如果应用发送完指令后就不再参与过程了，只需要<strong>等待最终完成结果的通知，那么这就属于异步</strong>。</p>
+<p>我们再看同步阻塞、同步非阻塞，他们不同的只是发起读取请求的时候一个请求阻塞，一个请求不阻塞，但是相同的是，他们都需要应用自己监控整个数据完成的过程。而为什么只有异步非阻塞 而没有异步阻塞呢，因为异步模型下请求指定发送完后就即刻返回了，没有任何后续流程了，所以它注定不会阻塞，所以也就只会有异步非阻塞模型了。</p>
+<h3 id="3-7-总结"><a href="#3-7-总结" class="headerlink" title="3.7 总结"></a>3.7 总结</h3><p>同步和异步的概念针对的是应用程序和内核之间的交互状态，比如用户进程<strong>触发IO操作并等待或者轮询去看IO操作是否就绪，然后读取数据</strong>，这是同步，而<strong>异步</strong>指的是用户进程<strong>触发IO操作</strong>后便开始做自己的事情，<strong>当IO操作完成时会得到通知，不再需要自己去接收数据</strong>，内核已经帮我们处理好了数据。而<strong>阻塞和非阻塞指的是进程访问数据时，根据IO操作的就绪状态而采取的不同方式</strong>，阻塞方式下，读取或写入函数不会立即返回一个状态值，而是一直等待，直到读取数据完成才返回，而非阻塞状态下不会挂起线程，直接返回状态值。</p>
+<p>同步：应用程序不停轮询是否准备好数据，并且准备好后再发起读取请求(两次询问，数据是否准备好，数据copy至用户空间)</p>
+<p>异步:应用程序不需要轮询，内核将数据准备好并拷贝至用户空间，然后通知应用程序(一次请求)</p>
+<p>阻塞：轮询时不直接返回状态值，一直等待</p>
+<p>非阻塞：轮询时直接返回状态值</p>
+<h2 id="4-内存管理机制"><a href="#4-内存管理机制" class="headerlink" title="4.内存管理机制"></a>4.内存管理机制</h2><p>简单分为<strong>连续分配管理方式</strong>和<strong>非连续分配管理方式</strong>这两种。</p>
+<p><strong>连续</strong>分配管理方式是指为一个用户程序分配一个连续的内存空间，常见的如<strong>块式管理</strong> 。</p>
+<p><strong>块式管理</strong> ： 将内存分为几个固定大小的块，每个块中只包含一个进程。如果程序运行需要内存的话，操作系统就分配给它一块，如果程序运行只需要很小的空间的话，分配的这块内存很大一部分几乎被浪费了。这些在每个块中未被利用的空间，我们称之为碎片。</p>
+<p><strong>非连续</strong>分配管理方式允许一个程序使用的内存分布在离散或者说不相邻的内存中，常见的如<strong>页式管理、段式管理、段页式管理</strong>。</p>
+<ol>
+<li><p><strong>页式管理</strong> ：把主存分为大小相等且固定的一页一页的形式，页较小，相比于块式管理的划分粒度更小，提高了内存利用率，减少了碎片。页式管理通过页表对应逻辑地址和物理地址。</p>
+</li>
+<li><p><strong>段式管理</strong> ： 页式管理虽然提高了内存利用率，但是页式管理其中的页并无任何实际意义。 段式管理把主存分为一段段的，段是有实际意义的，每个段定义了一组逻辑信息，例如,有主程序段 MAIN、子程序段 X、数据段 D 及栈段 S 等。 段式管理通过段表对应逻辑地址和物理地址。</p>
+<p>简单来说：页是物理单位，段是逻辑单位。分页可以有效提高内存利用率，分段可以更好满足用户需求。</p>
+</li>
+<li><p><strong>段页式管理机制</strong><br>段页式管理机制结合了段式管理和页式管理的优点。简单来说段页式管理机制就是把主存先分成若干段，每个段又分成若干页，也就是说段页式管理机制中段与段之间以及段的内部的都是离散的。</p>
+</li>
+</ol>
+<h3 id="分页机制和分段机制的共同点和区别"><a href="#分页机制和分段机制的共同点和区别" class="headerlink" title="分页机制和分段机制的共同点和区别"></a>分页机制和分段机制的共同点和区别</h3><ol>
+<li><strong>共同点</strong> ：<ul>
+<li>分页机制和分段机制都是为了提高内存利用率，减少内存碎片。</li>
+<li>页和段都是离散存储的，所以两者都是离散分配内存的方式。但是，每个页和段中的内存是连续的。</li>
+</ul>
+</li>
+<li><strong>区别</strong> ：<ul>
+<li>页的大小是固定的，由操作系统决定；而段的大小不固定，取决于我们当前运行的程序。</li>
+<li>分页仅仅是为了满足操作系统内存管理的需求，而段是逻辑信息的单位，在程序中可以体现为代码段，数据段，能够更好满足用户的需要。</li>
+</ul>
+</li>
+</ol>
+<h2 id="5-快表和多级页表"><a href="#5-快表和多级页表" class="headerlink" title="5. 快表和多级页表"></a>5. 快表和多级页表</h2><p>在分页内存管理中，很重要的两点是：</p>
+<ol>
+<li>虚拟地址到物理地址的转换要快。</li>
+<li>解决虚拟地址空间大，页表也会很大的问题</li>
+</ol>
+<h3 id="快表"><a href="#快表" class="headerlink" title="快表"></a>快表</h3><p>为了提高虚拟地址到物理地址的转换速度，操作系统在页表方案基础之上引入了<strong>快表</strong>来加速虚拟地址到物理地址的转换。我们可以把快表理解为一种特殊的<strong>高速缓冲存储器</strong>（Cache），其中的内容是页表的一部分或者全部内容。作为页表的 Cache，它的作用与页表相似，但是提高了访问速率。由于采用页表做地址转换，读写内存数据时 CPU 要访问两次主存。有了快表，有时只要访问一次高速缓冲存储器，一次主存，这样可加速查找并提高指令执行速度。</p>
+<p><strong>使用快表之后的地址转换流程</strong>是这样的：</p>
+<ol>
+<li>根据虚拟地址中的页号查快表；</li>
+<li>如果该页在快表中，直接从快表中读取相应的物理地址；</li>
+<li>如果该页不在快表中，就访问内存中的页表，再从页表中得到物理地址，同时将页表中的该映射表项添加到快表中；</li>
+<li>当快表填满后，又要登记新页时，就按照一定的淘汰策略淘汰掉快表中的一个页。</li>
+</ol>
+<p>PS：快表和我们平时经常在我们开发的系统使用的缓存(比如Redis)很像.</p>
+<h3 id="多级页表"><a href="#多级页表" class="headerlink" title="多级页表"></a>多<strong>级页表</strong></h3><p>引入多级页表的主要目的是为了<strong>避免把全部页表一直放在内存中占用过多空间</strong>，特别是那些根本就不需要的页表就不需要保留在内存中。一级页表只存储二级页表的下标索引。多级页表属于时间换空间的典型场景。</p>
+<h2 id="6-逻辑-虚拟-地址和物理地址"><a href="#6-逻辑-虚拟-地址和物理地址" class="headerlink" title="6. 逻辑(虚拟)地址和物理地址"></a>6. 逻辑(虚拟)地址和物理地址</h2><p>我们编程一般只有可能和逻辑地址打交道，比如在 C 语言中，指针里面存储的数值就可以理解成为内存里的一个地址，这个地址也就是我们说的逻辑地址，<strong>逻辑地址</strong>由操作系统决定。</p>
+<p><strong>物理地址</strong>指的是真实物理内存中地址，更具体一点来说就是内存地址寄存器中的地址。物理地址是内存单元真正的地址。</p>
+<h2 id="7-CPU-寻址了解吗-为什么需要虚拟地址空间"><a href="#7-CPU-寻址了解吗-为什么需要虚拟地址空间" class="headerlink" title="7. CPU 寻址了解吗?为什么需要虚拟地址空间?"></a>7. CPU 寻址了解吗?为什么需要虚拟地址空间?</h2><p>现代处理器使用的是一种称为 <strong>虚拟寻址(Virtual Addressing)<strong>的寻址方式。</strong>使用虚拟寻址，CPU 需要将虚拟地址翻译成物理地址，这样才能访问到真实的物理内存。</strong><br> 实际上完成虚拟地址转换为物理地址转换的硬件是 CPU 中含有一个被称为 <strong>内存管理单元（Memory Management Unit, MMU）</strong> 的硬件。</p>
+<h3 id="为什么要有虚拟地址空间呢？"><a href="#为什么要有虚拟地址空间呢？" class="headerlink" title="为什么要有虚拟地址空间呢？"></a>为什么要有虚拟地址空间呢？</h3><p>先从没有虚拟地址空间的时候说起吧！没有虚拟地址空间的时候，<strong>程序直接访问和操作的都是物理内存</strong> 。但是这样有什么问题呢？</p>
+<ol>
+<li>用户程序可以访问任意内存，寻址内存的每个字节，这样就很容易（有意或者无意）破坏操作系统，造成操作系统崩溃。</li>
+<li>想要同时运行多个程序特别困难，比如你想同时运行一个微信和一个 QQ 音乐都不行。为什么呢？举个简单的例子：微信在运行的时候给内存地址 1xxx 赋值后，QQ 音乐也同样给内存地址 1xxx 赋值，那么 QQ 音乐对内存的赋值就会覆盖微信之前所赋的值，这就造成了微信这个程序就会崩溃。</li>
+</ol>
+<p><strong>总结来说：如果直接把物理地址暴露出来的话会带来严重问题，比如可能对操作系统造成伤害以及给同时运行多个程序造成困难。</strong></p>
+<p>通过虚拟地址访问内存有以下优势：</p>
+<ul>
+<li>程序可以使用一系列相邻的虚拟地址来访问物理内存中不相邻的大内存缓冲区。</li>
+<li>程序可以使用一系列虚拟地址来访问大于可用物理内存的内存缓冲区。当物理内存的供应量变小时，内存管理器会将物理内存页（通常大小为 4 KB）保存到磁盘文件。数据或代码页会根据需要在物理内存与磁盘之间移动。</li>
+<li>不同进程使用的虚拟地址彼此隔离。一个进程中的代码无法更改正在由另一进程或操作系统使用的物理内存。</li>
+</ul>
+<h2 id="8-什么是虚拟内存？"><a href="#8-什么是虚拟内存？" class="headerlink" title="8. 什么是虚拟内存？"></a>8. 什么是虚拟内存？</h2><p>很多时候我们使用了很多占内存的软件，这些软件占用的内存可能已经远远超出了我们电脑本身具有的物理内存。正是因为虚拟内存的存在，通过 <strong>虚拟内存</strong> 可以让程序可以拥有超过系统物理内存大小的可用内存空间。另外，<strong>虚拟内存为每个进程提供了一个一致的、私有的地址空间，它让每个进程产生了一种自己在独享主存的错觉（每个进程拥有一片连续完整的内存空间）</strong>。这样会更加有效地管理内存并减少出错。</p>
+<p><strong>虚拟内存</strong>是计算机系统内存管理的一种技术，我们可以手动设置自己电脑的虚拟内存。不要单纯认为虚拟内存只是“使用硬盘空间来扩展内存“的技术。<strong>虚拟内存的重要意义是它定义了一个连续的虚拟地址空间</strong>，并且 <strong>把内存扩展到硬盘空间</strong>。</p>
+<h3 id="8-1虚拟内存的实现技术？"><a href="#8-1虚拟内存的实现技术？" class="headerlink" title="8.1虚拟内存的实现技术？"></a>8.1虚拟内存的实现技术？</h3><ol>
+<li><strong>请求分页存储管理</strong> ：建立在分页管理之上，为了支持虚拟存储器功能而增加了请求调页功能和页面置换功能。请求分页是目前最常用的一种实现虚拟存储器的方法。请求分页存储管理系统中，在作业开始运行之前，仅装入当前要执行的部分段即可运行。假如在作业运行的过程中发现要访问的页面不在内存，则由处理器通知操作系统按照对应的页面置换算法将相应的页面调入到主存，同时操作系统也可以将暂时不用的页面置换到外存中。</li>
+<li><strong>请求分段存储管理</strong> ：建立在分段存储管理之上，增加了请求调段功能、分段置换功能。请求分段储存管理方式就如同请求分页储存管理方式一样，在作业开始运行之前，仅装入当前要执行的部分段即可运行；在执行过程中，可使用请求调入中断动态装入要访问但又不在内存的程序段；当内存空间已满，而又需要装入新的段时，根据置换功能适当调出某个段，以便腾出空间而装入新的段。</li>
+<li><strong>请求段页式存储管理</strong></li>
+</ol>
+<h3 id="8-2-请求分页-和-分页存储管理-的区别？"><a href="#8-2-请求分页-和-分页存储管理-的区别？" class="headerlink" title="8.2 请求分页 和 分页存储管理 的区别？"></a>8.2 请求分页 和 分页存储管理 的区别？</h3><p>请求分页存储管理建立在分页管理之上。他们的根本区别是是否将程序全部所需的全部地址空间都装入主存，这也是请求分页存储管理可以提供虚拟内存的原因。</p>
+<p>它们之间的<strong>根本区别</strong>在于<strong>是否将一作业的全部地址空间同时装入主存</strong>。请求分页存储管理不要求将作业全部地址空间同时装入主存。基于这一点，请求分页存储管理可以提供虚存，而分页存储管理却不能提供虚存。</p>
+<p>不管是上面那种实现方式，我们一般都需要：</p>
+<ol>
+<li>一定容量的内存和外存：在载入程序的时候，只需要将程序的一部分装入内存，而将其他部分留在外存，然后程序就可以执行了；</li>
+<li><strong>缺页中断</strong>：如果<strong>需执行的指令或访问的数据尚未在内存</strong>（称为缺页或缺段），则由处理器通知操作系统将相应的页面或段<strong>调入到内存</strong>，然后继续执行程序；</li>
+<li><strong>虚拟地址空间</strong> ：逻辑地址到物理地址的变换。</li>
+</ol>
+<h3 id="8-3-页面置换算法"><a href="#8-3-页面置换算法" class="headerlink" title="8.3 页面置换算法"></a>8.3 页面置换算法</h3><ul>
+<li><strong>OPT 页面置换算法（最佳页面置换算法）</strong> ：最佳(Optimal, OPT)置换算法所选择的被淘汰页面将是以后永不使用的，或者是在最长时间内不再被访问的页面,这样可以保证获得最低的缺页率。但由于人们目前无法预知进程在内存下的若千页面中哪个是未来最长时间内不再被访问的，因而该算法无法实现。一般作为衡量其他置换算法的方法。</li>
+<li><strong>FIFO（First In First Out） 页面置换算法（先进先出页面置换算法）</strong> : 总是淘汰最先进入内存的页面，即选择在内存中驻留时间最久的页面进行淘汰。</li>
+<li><strong>LRU （Least Recently Used）页面置换算法（最近最久未使用页面置换算法）</strong> ：LRU 算法赋予每个页面一个访问字段，用来记录一个页面自上次被访问以来所经历的时间 T，当须淘汰一个页面时，选择现有页面中其 T 值最大的，即最近最久未使用的页面予以淘汰。</li>
+<li><strong>LFU （Least Frequently Used）页面置换算法（最少使用页面置换算法）</strong> : 该置换算法选择在之前时期使用最少的页面作为淘汰页。</li>
+</ul>
+<h2 id="9-局部性原理"><a href="#9-局部性原理" class="headerlink" title="9. 局部性原理"></a>9. 局部性原理</h2><p>局部性原理是虚拟内存技术的基础，正是因为程序运行具有局部性原理，才可以只装入部分程序到内存就开始运行。</p>
+<p>局部性原理表现在以下两个方面：</p>
+<ol>
+<li><strong>时间局部性</strong> ：如果程序中的某条指令一旦执行，不久以后该指令可能再次执行；如果某数据被访问过，不久以后该数据可能再次被访问。产生时间局部性的典型原因，是由于在程序中存在着大量的循环操作。</li>
+<li><strong>空间局部性</strong> ：一旦程序访问了某个存储单元，在不久之后，其附近的存储单元也将被访问，即程序在一段时间内所访问的地址，可能集中在一定的范围之内，这是因为指令通常是顺序存放、顺序执行的，数据也一般是以向量、数组、表等形式簇聚存储的。</li>
+</ol>
+<p>时间局部性是通过将近来使用的指令和数据保存到高速缓存存储器中，并使用高速缓存的层次结构实现。空间局部性通常是使用较大的高速缓存，并将预取机制集成到高速缓存控制逻辑中实现。虚拟内存技术实际上就是建立了 “内存一外存”的两级存储器的结构，利用局部性原理实现髙速缓存。</p>
+<h2 id="10-系统调用"><a href="#10-系统调用" class="headerlink" title="10. 系统调用"></a>10. 系统调用</h2><p>介绍系统调用之前，先说一下用户态和系统态。</p>
+<p>根据进程访问资源的特点，我们可以把进程在系统上的运行分为两个级别：</p>
+<ol>
+<li><strong>用户态(user mode)</strong> : 用户态运行的进程或可以直接读取用户程序的数据。</li>
+<li><strong>系统态(kernel mode)</strong>: 可以简单的理解系统态运行的进程或程序几乎可以访问计算机的任何资源，不受限制。</li>
+</ol>
+<p>我们运行的程序基本都是运行在用户态，如果我们调用操作系统提供的系统态级别的子功能咋办呢？那就需要系统调用了！</p>
+<p>也就是说在我们运行的用户程序中，凡是与系统态级别的资源有关的操作（如文件管理、进程控制、内存管理等)，都必须通过系统调用方式向操作系统提出服务请求，并由操作系统代为完成。</p>
+<p>这些系统调用按功能大致可分为如下几类：</p>
+<ul>
+<li><strong>设备管理</strong> ：完成设备的请求或释放，以及设备启动等功能。</li>
+<li><strong>文件管理</strong> ：完成文件的读、写、创建及删除等功能。</li>
+<li><strong>进程控制</strong> ：完成进程的创建、撤销、阻塞及唤醒等功能。</li>
+<li><strong>进程通信</strong> ：完成进程之间的消息传递或信号传递等功能。</li>
+<li><strong>内存管理</strong> ：完成内存的分配、回收以及获取作业占用内存区大小及地址等功能。</li>
+</ul>
+
+
+<h2 id="11-自旋锁"><a href="#11-自旋锁" class="headerlink" title="11.自旋锁"></a>11.自旋锁</h2><p><strong>自旋锁</strong>的定义：当一个线程尝试去获取某一把锁的时候，如果这个锁此时已经被别人获取(占用)，那么此线程就无法获取到这把锁，该线程将会等待，间隔一段时间后会再次尝试获取。这种采用循环加锁 -&gt; 等待的机制被称为自旋锁(spinlock)。</p>
+<p><strong>自旋锁有以下特点</strong></p>
+<ul>
+<li>用于临界区互斥</li>
+<li>在任何时刻最多只能有一个执行单元获得锁</li>
+<li>要求持有锁的处理器所占用的时间尽可能短</li>
+<li>等待锁的线程进入忙循环</li>
+</ul>
+<p><strong>自旋锁存在的问题</strong></p>
+<ul>
+<li>如果某个线程持有锁的时间过长，就会导致其它等待获取锁的线程进入循环等待，消耗CPU。使用不当会造成CPU使用率极高。</li>
+<li>无法满足等待时间最长的线程优先获取锁。不公平的锁就会存在“线程饥饿”问题。</li>
+</ul>
+<p><strong>自旋锁的优点</strong></p>
+<ul>
+<li>自旋锁不会使线程状态发生切换，一直处于用户态，即线程一直都是active的；不会使线程进入阻塞状态，减少了不必要的上下文切换，执行速度快</li>
+<li>非自旋锁在获取不到锁的时候会进入阻塞状态，从而进入内核态，当获取到锁的时候需要从内核态恢复，需要线程上下文切换。（线程被阻塞后便进入内核（Linux）调度状态，这个会导致系统在用户态与内核态之间来回切换，严重影响锁的性能）</li>
+</ul>
+<p><strong>自旋锁与互斥锁的区别</strong></p>
+<ul>
+<li>自旋锁与互斥锁都是为了实现保护资源共享的机制。</li>
+<li>无论是自旋锁还是互斥锁，在任意时刻，都最多只能有一个保持者。</li>
+<li>获取互斥锁的线程，如果锁已经被占用，则该线程将进入睡眠状态；获取自旋锁的线程则不会睡眠，而是一直循环等待锁释放。</li>
+</ul>
+<h2 id="12-软链接、硬链接"><a href="#12-软链接、硬链接" class="headerlink" title="12.软链接、硬链接"></a>12.软链接、硬链接</h2><p><strong>软链接</strong>相当于建立了一个新的快捷方式文件，该文件有自己的名称和inode以及物理存储的文件数据，文件数据里记录着如何跳转的设置数据，访问该快捷文件会被重新定向到原始文件，删除原始文件，软链文件失效；</p>
+<p><strong>硬链接</strong>相当于为当前文件名对应的文件再建立了一个文件别名，别名对应的inode以及物理数据都是一样的，事实上文件系统会维护一个引用计数，只要有文件指向这个区块，它就不会从硬盘上消失，而硬链接相当于是给引用计数加1。</p>
+<p><strong>软连接和硬链接的区别</strong></p>
+<p>​	(1) <strong>软链接</strong>可以为文件和目录（哪怕是不存在的）创建链接；<strong>硬链接</strong>只能为文件创建链接。 </p>
+<p>​	(2) <strong>软链接</strong>可以跨文件系统；<strong>硬链接</strong>必须是同一个文件系统 </p>
+<p>​	(3) <strong>硬链接</strong>因为只是文件的一个别名，所以不重复占用内存；<strong>软链接</strong>因为只是一个访问文件的快捷方式文件，文件内只包含快捷指向信息，所以占用很小的内存。 </p>
+<p>​	(4) <strong>软链接</strong>的文件权限和源文件可以不一样；<strong>硬链接</strong>文件权限肯定是一样的，因为他们本来就是一个文件的不同名称而已。</p>
+<p><strong>二者使用场景</strong></p>
+<pre><code> 一般比较重要的文件我们担心文件被误删除且传统复制备份方式占用double数量的空间会造成浪费，可以使用硬链做备份来解决；软链接一般被用来设置可执行文件的快捷方式的路径。
+</code></pre>
+<h2 id="13-select、poll和epoll"><a href="#13-select、poll和epoll" class="headerlink" title="13.select、poll和epoll"></a>13.select、poll和epoll</h2><h3 id="13-1-linux内核事件机制"><a href="#13-1-linux内核事件机制" class="headerlink" title="13.1 linux内核事件机制"></a>13.1 linux内核事件机制</h3><p>在Linux内核中存在着等待队列的数据结构，该数据结构是基于<strong>双端链表</strong>实现，Linux内核通过将阻塞的进程任务添加到等待队列中，而进程任务被唤醒则是在队列轮询遍历检测是否处于就绪状态，如果是，那么会在等待队列中删除等待节点并通过节点上的回调函数进行通知，然后加入到cpu就绪队列中等待cpu调度执行。其具体流程主要包含以下两个处理逻辑,即休眠逻辑以及唤醒逻辑.</p>
+<h3 id="13-2-休眠逻辑"><a href="#13-2-休眠逻辑" class="headerlink" title="13.2 休眠逻辑"></a>13.2 休眠逻辑</h3><ul>
+<li>在linux内核中某一个进程任务task执行需要等待某个条件condition被触发执行之前，首先会在内核中创建一个等待节点entry，然后初始化entry相关属性信息，其中将进程任务存放在entry节点并同时存储一个wake_callback函数并挂起当前进程</li>
+<li>不断轮询检查当前进程任务task执行的condition是否满足,如果不满足则调用schedule()进入休眠状态</li>
+<li>最后如果满足condition的话,就会将entry从队列中移除,也就是说这个时候事件已经被唤醒，进程处于就绪状态</li>
+</ul>
+<h3 id="13-3-唤醒逻辑"><a href="#13-3-唤醒逻辑" class="headerlink" title="13.3 唤醒逻辑"></a>13.3 唤醒逻辑</h3><ul>
+<li>在等待队列中循环遍历所有的entry节点,并执行回调函数,直到当前entry为排他节点（条件就绪）的时候退出循环遍历</li>
+<li>执行的回调函数中,存在私有逻辑与公用逻辑,类似模板方法设计模式</li>
+<li>对于default_wake_function的唤醒回调函数主要是将entry的进程任务task添加到cpu就绪队列中等待cpu调度执行任务task</li>
+</ul>
+<h3 id="13-4-文件描述符fd"><a href="#13-4-文件描述符fd" class="headerlink" title="13.4 文件描述符fd"></a>13.4 文件描述符fd</h3><p>文件描述符（File descriptor）是计算机科学中的一个术语，<strong>是一个用于表述指向文件的引用的抽象化概念</strong>。</p>
+<p>文件描述符在形式上是一个非负整数。实际上，<strong>它是一个索引值，指向内核为每一个进程所维护的该进程打开文件的记录表</strong>。</p>
+<h3 id="13-5-复用原理"><a href="#13-5-复用原理" class="headerlink" title="13.5 复用原理"></a>13.5 复用原理</h3><img src="/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/98toev8705.jpeg" class="">
+
+<p>基于Linux内核的等待与唤醒机制</p>
+<ul>
+<li>用户进程向内核发起select函数的调用,并携带socket描述符集合从用户空间复制到内核空间,由内核对socket集合进行可读状态的监控.</li>
+<li>当前内核没有数据可达的时候,将注册的socket集合分别以entry节点的方式添加到链表结构的等待队列中等待数据报可达.</li>
+<li>这个时候网卡设备接收到网络发送的数据报,内核接收到数据报,就会通过轮询唤醒的方式(内核并不知道是哪个socket可读)逐个进行唤醒通知,直到当前socket描述符有可读状态的时候就退出轮询，然后从等待队列移除对应的socket节点entry,并且这个时候内核将会更新fd集合中的描述符的状态,以便于用户进程知道是哪些socket是具备可读性从而方便后续进行数据读取操作</li>
+<li>同时在轮询唤醒的过程中,如果有对应的socket描述符是可读的,那么此时会将read_process加入到cpu就绪队列中,让cpu能够调度执行read_process任务</li>
+<li>最后是用户进程调用select函数返回成功,此时用户进程会在socket描述符结合中进行轮询遍历具备可读的socket,此时也就意味着数据此时在内核已经准备就绪,用户进程可以向内核发起数据读取操作,也就是执行上述的read_process任务操作</li>
+</ul>
+<h3 id="13-6-select"><a href="#13-6-select" class="headerlink" title="13.6 select"></a>13.6 select</h3><p>在Linux中，我们可以使用select函数实现I&#x2F;O端口的复用，传递给 select函数的参数会告诉内核：</p>
+<p>   •我们所关心的文件描述符</p>
+<p>   •对每个描述符，我们所关心的状态。(我们是要想从一个文件描述符中读或者写，还是关注一个描述符中是否出现异常)</p>
+<p>   •我们要等待多长时间。(我们可以等待无限长的时间，等待固定的一段时间，或者根本就不等待)</p>
+<p>  从 select函数返回后，内核告诉我们一下信息：</p>
+<p>   •对我们的要求已经做好准备的描述符的个数</p>
+<p>   •对于三种条件哪些描述符已经做好准备.(读，写，异常)</p>
+<p>  有了这些返回信息，我们可以调用合适的I&#x2F;O函数(通常是 read 或 write)，并且这些函数不会再阻塞.</p>
+<h4 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h4><ul>
+<li>用户进程向内核发起<strong>select函数的调用</strong>,并携带fd集合<strong>从用户空间复制到内核空间</strong>,由内核对fd集合进行可读状态的监控.</li>
+<li>数据准备就绪,就会通过轮询的方式(内核并不知道是哪个fd可读)逐个进行唤醒通知,并进行返回。fd集合在就绪返回前被修改，仅仅保留了就绪的描述符，因此每次重新监控前需要重新添加到描述符集合中。</li>
+<li>用户进程调用select函数返回成功,此时用户进程会在fd集合中进行轮询遍历具备可读的fd,此时也就意味着数据此时在内核已经准备就绪,用户进程可以向内核发起数据读取操作,也就是执行上述的read_process任务操作</li>
+</ul>
+<h4 id="特点："><a href="#特点：" class="headerlink" title="特点："></a>特点：</h4><p>优点：</p>
+<p>​	良好的跨平台性</p>
+<p>缺点：</p>
+<ol>
+<li>在Linux中基于POSIX协议定义的select技术使用数组存储描述符fd，<strong>最大可支持的描述符个数为1024个</strong>。</li>
+<li>用户进程<strong>调用select的时候需要将一整个fd集合的大块内存从用户空间拷贝到内核中</strong>,期间用户空间与内核空间来回切换开销非常大,再加上调用select的频率本身非常频繁,这样导致高频率调用且大内存数据的拷贝,严重影响性能。</li>
+<li><strong>唤醒逻辑</strong>的处理,select技术在等待过程如果监控到至少有一个socket事件是可读的时候将<strong>会唤醒整个等待队列</strong>,告知当前等待队列中有存在就绪事件的socket,但是具体是哪个socket不知道,必须通过轮询的方式逐个遍历进行回调通知,**轮询遍历的时间复杂度是O(n)**。</li>
+</ol>
+<h3 id="13-7-poll"><a href="#13-7-poll" class="headerlink" title="13.7 poll"></a>13.7 poll</h3><p>poll技术与select技术实现逻辑基本一致,重要区别在于其使用链表的方式存储描述符fd,不受数组大小影响。</p>
+<h3 id="13-8-epoll"><a href="#13-8-epoll" class="headerlink" title="13.8 epoll"></a>13.8 epoll</h3><p>解决了select和poll的两个瓶颈问题</p>
+<ol>
+<li>fd集合拷贝问题</li>
+<li>循环轮询问题</li>
+</ol>
+<p>epoll操作过程需要三个接口:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">epoll_create</span><span class="params">(<span class="type">int</span> size)</span>；<span class="comment">//创建一个epoll的句柄，size用来告诉内核这个监听的数目一共有多大 int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)； int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout);</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>1. int epoll_create(int size);</strong></p>
+<p>创建一个epoll的句柄，size用来告诉内核这个监听的数目一共有多大，这个参数不同于select()中的第一个参数，给出最大监听的fd+1的值，<strong>参数size并不是限制了epoll所能监听的描述符最大个数，只是对内核初始分配内部数据结构的一个建议。</strong></p>
+<p><strong>2. int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)；</strong></p>
+<p>函数是对指定描述符fd执行op操作。</p>
+<p>用于向内核注册新的描述符或者是改变某个文件描述符的状态。已注册的描述符在内核中会被维护在一棵红黑树上</p>
+<ul>
+<li>epfd：是epoll_create()的返回值。</li>
+<li>op：表示op操作，用三个宏来表示：添加EPOLL_CTL_ADD，删除EPOLL_CTL_DEL，修改EPOLL_CTL_MOD。分别添加、删除和修改对fd的监听事件。</li>
+<li>fd：是需要监听的fd（文件描述符）</li>
+<li>epoll_event：是告诉内核需要监听什么事</li>
+</ul>
+<p><strong>3. int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout);</strong></p>
+<p>等待epfd上的io事件，最多返回maxevents个事件。</p>
+<p>通过回调函数内核会将 I&#x2F;O 准备好的描述符添加到rdlist双链表管理，进程调用 epoll_wait() 便可以得到事件完成的描述符。</p>
+<h4 id="工作模式"><a href="#工作模式" class="headerlink" title="工作模式"></a>工作模式</h4><p>epoll对文件描述符的操作有两种模式：<strong>LT (level trigger)（默认）</strong>和**ET (edge trigger)**。LT模式是默认模式。</p>
+<p>LT模式与ET模式的区别如下：</p>
+<ul>
+<li><strong>LT模式</strong>：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，<strong>应用程序可以不立即处理该事件</strong>。下次调用epoll_wait时，会再次响应应用程序并通知此事件。只要文件描述符的缓冲区中有数据，就永远通知用户这个描述符是可读的。<strong>支持block和noblock。</strong></li>
+<li><strong>ET模式</strong>：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，<strong>应用程序必须立即处理该事件</strong>。如果不处理，下次调用epoll_wait时，不会再次响应应用程序并通知此事件。只有在文件描述符有新的监听事件发生的时候（例如有新的数据包到达）才会通知应用程序，在没有新的监听时间发生时，即使缓冲区有数据（即上一次没有读完，或者甚至没有读），epoll也不会继续通知应用程序。<strong>只支持nonblock</strong></li>
+</ul>
+<h4 id="特点：-1"><a href="#特点：-1" class="headerlink" title="特点："></a>特点：</h4><p>在 select&#x2F;poll中，进程只有在调用一定的方法后，内核才对所有监视的文件描述符进行扫描，而<strong>epoll事先通过epoll_ctl()来注册一 个文件描述符，一旦基于某个文件描述符就绪时，内核会采用类似callback的回调机制，迅速激活这个文件描述符，当进程调用epoll_wait() 时便得到通知</strong>。(<code>此处去掉了遍历文件描述符，而是通过监听回调的的机制</code>。</p>
+<p>优点：</p>
+<ol>
+<li>监视的描述符数量不受限制</li>
+<li>epoll是内核空间用一个 <strong>红黑树</strong>维护所有的fd，epoll_wait 通过回调函数内核会将 I&#x2F;O 准备好的描述符加入到一个链表中管理，<strong>只把就绪的fd用链表复制到用户空间</strong>。</li>
+<li>IO的效率不会随着监视fd的数量的增长而下降。epoll不同于select和poll轮询的方式，而是通过每个fd定义的回调函数来实现的。只有就绪的fd才会执行回调函数。</li>
+</ol>
+<p><strong>极其高效的原因：</strong><br>这是由于我们在调用epoll_create时，内核除了帮我们在epoll文件系统里建了个file结点，在内核cache里建了个红黑树用于存储以后epoll_ctl传来的socket外，还会<strong>再建立一个list链表，用于存储准备就绪的事件</strong>，当epoll_wait调用时，仅仅观察这个list链表里有没有数据即可。有数据就返回，没有数据就sleep，等到timeout时间到后即使链表没数据也返回。所以，epoll_wait非常高效。</p>
+<p>这个准备就绪list链表是怎么维护的？<br>当我们执行epoll_ctl时，除了把socket放到epoll文件系统里file对象对应的红黑树上之外，还会给内核中断处理程序注册一个回调函数，告诉内核，如果这个句柄的中断到了，就把它放到准备就绪list链表里。所以，当一个socket上有数据到了，内核在把网卡上的数据copy到内核中后就来把socket插入到准备就绪链表里了。<br>上面这句可以看出，epoll的基础就是<strong>回调</strong>！</p>
+<h2 id="17-直接内存映射"><a href="#17-直接内存映射" class="headerlink" title="17.直接内存映射"></a>17.直接内存映射</h2><p>Linux提供的mmap系统调用, 它可以将一段用户空间内存映射到内核空间, 当映射成功后, 用户对这段内存区域的修改可以直接反映到内核空间；同样地， 内核空间对这段区域的修改也直接反映用户空间。正因为有这样的映射关系, 就不需要在用户态(User-space)与内核态(Kernel-space) 之间拷贝数据， 提高了数据传输的效率，这就是内存直接映射技术。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/10/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%85%AB%E8%82%A1%E6%96%87/" rel="tag">八股文</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2022/10/10/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            数据库
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2022/10/10/%E7%BD%91%E7%BB%9C/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">计算机网络</div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2022
+        <i class="ri-heart-fill heart_icon"></i> pp-lv
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.png" alt="LPL&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">Home</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">Archives</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">Categories</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">Tags</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">About</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i></p>
+  <div class="reward-box">
+    
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
