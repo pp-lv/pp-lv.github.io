@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>Spring |  LPL&#39;s Blog</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-spring"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Spring
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/10/13/spring/" class="article-date">
+  <time datetime="2022-10-13T07:38:53.000Z" itemprop="datePublished">2022-10-13</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/spring/">spring</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">8.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">29 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="1-什么是Spirng"><a href="#1-什么是Spirng" class="headerlink" title="1.什么是Spirng"></a>1.什么是Spirng</h3><p>Spring 是一款开源的轻量级 Java 开发框架，旨在提高开发人员的开发效率以及系统的可维护性。</p>
+<p>优点：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>.方便解耦，简化开发</span><br><span class="line">通过Spring提供的IoC容器，我们可以将对象之间的依赖关系交由Spring进行控制，避免硬编码所</span><br><span class="line">造成的过度程序耦合。有了Spring，用户不必再为单实例模式类、属性文件解析等这些很底层的需</span><br><span class="line">求编写代码，可以更专注于上层的应用。</span><br><span class="line"></span><br><span class="line"><span class="number">2</span><span class="selector-class">.AOP</span>编程的支持</span><br><span class="line">通过Spring提供的AOP功能，方便进行面向切面的编程，许多不容易用传统OOP实现的功能可以通过</span><br><span class="line">AOP轻松应付。</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>.声明事物的支持</span><br><span class="line">在Spring中，我们可以从单调烦闷的事务管理代码中解脱出来，通过声明式方式灵活地进行事务的</span><br><span class="line">管理，提高开发效率和质量。</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>.方便程序的测试</span><br><span class="line">可以用非容器依赖的编程方式进行几乎所有的测试工作，在Spring里，测试不再是昂贵的操作，</span><br><span class="line">而是随手可做的事情。例如：Spring对Junit4支持，可以通过注解方便的测试Spring程序。</span><br><span class="line"></span><br><span class="line"><span class="number">5</span>.方便集成各种优秀框架</span><br><span class="line">Spring不排斥各种优秀的开源框架，相反，Spring可以降低各种框架的使用难度，Spring提供了</span><br><span class="line">对各种优秀框架（如Struts,Hibernate、Hessian、Quartz）等的直接支持。</span><br><span class="line"></span><br><span class="line"><span class="number">6</span>.降低Java EE API的使用难度</span><br><span class="line">Spring对很多难用的Java EE API（如JDBC，JavaMail，远程调用等）提供了一个薄薄的封装层，</span><br><span class="line">通过Spring的简易封装，这些Java EE API的使用难度大为降低。</span><br><span class="line"></span><br><span class="line"><span class="number">7</span><span class="selector-class">.Java</span> 源码是经典学习范例</span><br><span class="line">Spring的源码设计精妙、结构清晰、匠心独用，处处体现着大师对Java设计模式灵活运用以及对</span><br><span class="line">Java技术的高深造诣。Spring框架源码无疑是Java技术的最佳实践范例。如果想在短时间内迅速</span><br><span class="line">提高自己的Java技术水平和应用开发水平，学习和研究Spring源码将会使你收到意想不到的效果。</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h3 id="2-列举一些重要的Spring框架"><a href="#2-列举一些重要的Spring框架" class="headerlink" title="2.列举一些重要的Spring框架"></a>2.列举一些重要的Spring框架</h3><p><strong>Spring Core</strong></p>
+<p>核心模块，Spring 其他所有的功能基本都需要依赖于该类库，主要提供 IoC 依赖注入功能的支持。</p>
+<p><strong>Spring Aspects</strong></p>
+<p>该模块为与 AspectJ 的集成提供支持。</p>
+<p><strong>Spring AOP</strong></p>
+<p>提供了面向切面的编程实现。</p>
+<p><strong>Spring Test</strong></p>
+<p>Spring 团队提倡测试驱动开发（TDD）。有了控制反转 (IoC)的帮助，单元测试和集成测试变得更简单。</p>
+<h3 id="3-Bean"><a href="#3-Bean" class="headerlink" title="3.Bean"></a>3.Bean</h3><h4 id="3-1什么是bean？"><a href="#3-1什么是bean？" class="headerlink" title="3.1什么是bean？"></a>3.1什么是bean？</h4><p>简单来说，bean 代指的就是那些被 IoC 容器所管理的对象。</p>
+<p>我们需要告诉 IoC 容器帮助我们管理哪些对象，这个是通过配置元数据来定义的。配置元数据可以是 XML 文件、注解或者 Java 配置类。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- Constructor-arg with &#x27;value&#x27; attribute --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;...&quot;</span> <span class="attr">class</span>=<span class="string">&quot;...&quot;</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;...&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>下图简单地展示了 IoC 容器如何使用配置元数据来管理对象。</p>
+<img src="/2022/10/13/spring/062b422bd7ac4d53afd28fb74b2bc94d.png" class="">
+
+<p><code>org.springframework.beans</code>和 <code>org.springframework.context</code> 这两个包是 IoC 实现的基础，如果想要研究 IoC 相关的源码的话，可以去看看</p>
+<h4 id="3-2-Component-和-Bean-的区别是什么？"><a href="#3-2-Component-和-Bean-的区别是什么？" class="headerlink" title="3.2.@Component 和 @Bean 的区别是什么？"></a>3.2.@Component 和 @Bean 的区别是什么？</h4><ol>
+<li><code>@Component</code> 注解作用于类，而<code>@Bean</code>注解作用于方法。</li>
+<li><code>@Component</code>通常是通过类路径扫描来自动侦测以及自动装配到 Spring 容器中（我们可以使用 <code>@ComponentScan</code> 注解定义要扫描的路径，从中找出标识了需要装配的类，自动装配到 Spring 的 bean 容器中）。<code>@Bean</code> 注解通常是我们在标有该注解的方法中定义产生这个 bean，<code>@Bean</code>告诉了 Spring 这是某个类的实例，当我需要用它的时候还给我。</li>
+<li><code>@Bean</code> 注解比 <code>@Component</code> 注解的自定义性更强，而且很多地方我们只能通过 <code>@Bean</code> 注解来注册 bean。比如当我们引用第三方库中的类需要装配到 <code>Spring</code>容器时，则只能通过 <code>@Bean</code>来实现。</li>
+</ol>
+<h4 id="3-3-将一个类声明为-bean-的注解有哪些"><a href="#3-3-将一个类声明为-bean-的注解有哪些" class="headerlink" title="3.3.将一个类声明为 bean 的注解有哪些?"></a>3.3.将一个类声明为 bean 的注解有哪些?</h4><p>我们一般使用 <code>@Autowired</code> 注解自动装配 bean，要想把类标识成可用于 <code>@Autowired</code> 注解自动装配的 bean 的类,采用以下注解可实现：</p>
+<ul>
+<li><code>@Component</code> ：通用的注解，可标注任意类为 <code>Spring</code> 组件。如果一个 Bean 不知道属于哪个层，可以使用<code>@Component</code> 注解标注。</li>
+<li><code>@Repository</code> : 对应持久层即 Dao 层，主要用于数据库相关操作。</li>
+<li><code>@Service</code> : 对应服务层，主要涉及一些复杂的逻辑，需要用到 Dao 层。</li>
+<li><code>@Controller</code> : 对应 Spring MVC 控制层，主要用户接受用户请求并调用 Service 层返回数据给前端页面。</li>
+</ul>
+<h4 id="3-4-Spring是如何管理Bean的？"><a href="#3-4-Spring是如何管理Bean的？" class="headerlink" title="3.4.Spring是如何管理Bean的？"></a>3.4.Spring是如何管理Bean的？</h4><p>Spring通过IOC容器来管理Bean。我们可以通过xml.配置或者注解配置，来指导IOC容器对Bean的管理。因为注解配置比XML配置方便很多，所以现在大多时候会使用注解配置的方式。 </p>
+<h4 id="3-5-如何获取Bean"><a href="#3-5-如何获取Bean" class="headerlink" title="3.5.如何获取Bean"></a>3.5.如何获取Bean</h4><p> <strong>通常如何获取bean</strong>   </p>
+<p>方法一：在初始化时保存ApplicationContext对象<br>方法二：通过Spring提供的utils类获取ApplicationContext对象<br>方法三：继承自抽象类ApplicationObjectSupport<br>方法四：继承自抽象类WebApplicationObjectSupport<br>方法五：实现接口ApplicationContextAware<br>方法六：通过Spring提供的ContextLoader</p>
+<h4 id="3-6-bean-扫描路径"><a href="#3-6-bean-扫描路径" class="headerlink" title="3.6.bean 扫描路径"></a><strong>3.6.bean 扫描路径</strong></h4><p>1:默认扫描启动类所在路径下所有的bean</p>
+<p>2：可以在启动类中添加注解,手动指定扫描路径：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ComponentScan(basePackages = &#123;&quot;com.xxx.service1.*&quot;,&quot;com.xxx.service2.**&quot;&#125;)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-7-bean-的作用域有哪些"><a href="#3-7-bean-的作用域有哪些" class="headerlink" title="3.7.bean 的作用域有哪些?"></a>3.7.bean 的作用域有哪些?</h4><p>Spring 中 Bean 的作用域通常有下面几种：</p>
+<ul>
+<li><strong>singleton</strong> : 唯一 bean 实例，Spring 中的 bean 默认都是单例的，对单例设计模式的应用。</li>
+<li><strong>prototype</strong> : 每次请求都会创建一个新的 bean 实例。</li>
+<li><strong>request</strong> : 每一次 HTTP 请求都会产生一个新的 bean，该 bean 仅在当前 HTTP request 内有效。</li>
+<li><strong>session</strong> : 每一次来自新 session 的 HTTP 请求都会产生一个新的 bean，该 bean 仅在当前 HTTP session 内有效。</li>
+<li><strong>global-session</strong> ： 全局 session 作用域，仅仅在基于 portlet 的 web 应用中才有意义，Spring5 已经没有了。Portlet 是能够生成语义代码(例如：HTML)片段的小型 Java Web 插件。它们基于 portlet 容器，可以像 servlet 一样处理 HTTP 请求。但是，与 servlet 不同，每个 portlet 都有不同的会话。</li>
+</ul>
+<p><strong>如何配置 bean 的作用域呢？</strong></p>
+<p>xml 方式：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;...&quot;</span> <span class="attr">class</span>=<span class="string">&quot;...&quot;</span> <span class="attr">scope</span>=<span class="string">&quot;singleton&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>注解方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)</span></span><br><span class="line"><span class="keyword">public</span> Person <span class="title function_">personPrototype</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Person</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-8-bean-的生命周期"><a href="#3-8-bean-的生命周期" class="headerlink" title="3.8.bean 的生命周期?"></a>3.8.bean 的生命周期?</h4><blockquote>
+<p>下面的内容整理自：<a target="_blank" rel="noopener" href="https://yemengying.com/2016/07/14/spring-bean-life-cycle/">https://yemengying.com/2016/07/14/spring-bean-life-cycle/</a> ，除了这篇文章，再推荐一篇很不错的文章 ：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zrtqsk/p/3735273.html">https://www.cnblogs.com/zrtqsk/p/3735273.html</a> 。</p>
+</blockquote>
+<ul>
+<li>Bean 容器找到配置文件中 Spring Bean 的定义。</li>
+<li>Bean 容器利用 Java Reflection API 创建一个 Bean 的实例。</li>
+<li>如果涉及到一些属性值 利用 <code>set()</code>方法设置一些属性值。</li>
+<li>如果 Bean 实现了 <code>BeanNameAware</code> 接口，调用 <code>setBeanName()</code>方法，传入 Bean 的名字。</li>
+<li>如果 Bean 实现了 <code>BeanClassLoaderAware</code> 接口，调用 <code>setBeanClassLoader()</code>方法，传入 <code>ClassLoader</code>对象的实例。</li>
+<li>如果 Bean 实现了 <code>BeanFactoryAware</code> 接口，调用 <code>setBeanFactory()</code>方法，传入 <code>BeanFactory</code>对象的实例。</li>
+<li>与上面的类似，如果实现了其他 <code>*.Aware</code>接口，就调用相应的方法。</li>
+<li>如果有和加载这个 Bean 的 Spring 容器相关的 <code>BeanPostProcessor</code> 对象，执行<code>postProcessBeforeInitialization()</code> 方法</li>
+<li>如果 Bean 实现了<code>InitializingBean</code>接口，执行<code>afterPropertiesSet()</code>方法。</li>
+<li>如果 Bean 在配置文件中的定义包含 init-method 属性，执行指定的方法。</li>
+<li>如果有和加载这个 Bean 的 Spring 容器相关的 <code>BeanPostProcessor</code> 对象，执行<code>postProcessAfterInitialization()</code> 方法</li>
+<li>当要销毁 Bean 的时候，如果 Bean 实现了 <code>DisposableBean</code> 接口，执行 <code>destroy()</code> 方法。</li>
+<li>当要销毁 Bean 的时候，如果 Bean 在配置文件中的定义包含 destroy-method 属性，执行指定的方法。</li>
+</ul>
+<p>图示：</p>
+<img src="/2022/10/13/spring/24bc2bad3ce28144d60d9e0a2edf6c7f.jpg" class="">
+
+<p>与之比较类似的中文版本:</p>
+<img src="/2022/10/13/spring/b5d264565657a5395c2781081a7483e1.jpg" class="">
+
+<h3 id="4-Spring是怎么解决循环依赖的？"><a href="#4-Spring是怎么解决循环依赖的？" class="headerlink" title="4.Spring是怎么解决循环依赖的？"></a>4.Spring是怎么解决循环依赖的？</h3><p>A在B之前执行</p>
+<table>
+<thead>
+<tr>
+<th>依赖情况</th>
+<th>依赖注入方式</th>
+<th>循环依赖是否被解决</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AB相互依赖（循环依赖）</td>
+<td>均采用setter方法注入</td>
+<td>是</td>
+</tr>
+<tr>
+<td>AB相互依赖（循环依赖）</td>
+<td>均采用构造器注入</td>
+<td>否</td>
+</tr>
+<tr>
+<td>AB相互依赖（循环依赖）</td>
+<td>A中注入B的方式为setter方法，B中注入A的方式为构造器</td>
+<td>是</td>
+</tr>
+<tr>
+<td>AB相互依赖（循环依赖）</td>
+<td>B中注入A的方式为setter方法，A中注入B的方式为构造器</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<p>Spring对循环依赖的处理有三种情况：</p>
+<ul>
+<li><p><strong>全部通过构造器注入的循环依赖</strong>：无法处理，直接抛出异常，构造器注入无法利用缓存。</p>
+</li>
+<li><p><strong>setter方式原型作用域为prototype</strong>：无法处理。（“prototype”作用域的Bean，每次都要创建新的对象，，Spring容器无法利用缓存，因此无法提前暴露一个创建中的Bean。）</p>
+</li>
+<li><p><strong>单例模式下的setter循环依赖</strong>：通过<strong>“三级缓存”</strong>处理。核心是利用一个map，map就相当于是一个缓存。</p>
+<ul>
+<li>singletonFactories：进入实例化阶段的单例对象工厂cache（三级缓存）</li>
+<li>earlySingletonObjects：完成实例化但是未进行属性注入及初始化的，提前曝光的单例对象的cache（二级缓存）</li>
+<li>singletonObjects：完成初始化的单例对象的cache（一级缓存）</li>
+</ul>
+<p><strong>情景</strong>：<strong>”A的某个field或者setter依赖了B的实例对象，同时B的某个field或者setter依赖了A的实例对象“</strong></p>
+<img src="/2022/10/13/spring/cwNjE2MTcwOTgyOS5wbmc.png" class="">
+
+<ul>
+<li>A完成初始化的第一步，并且将自己提前曝光到singletonFactories中，此时进行初始化的第二步，发现自己依赖对象B，此时就尝试去get(B)，发现B还没有被创建，所有走创建流程。</li>
+</ul>
+</li>
+<li><p>B在初始化第一步的时候发现自己依赖于A，尝试get(A)，依次尝试一二级缓存，都没有A，于是尝试三级缓存。由于A提前将自己曝光了，所以B能够顺利拿到A对象，这样B就可以完成初始化阶段，完全初始化之后将自己放入到一级缓存中。</p>
+<ul>
+<li>此时返回A，A此时能拿到B的对象顺利完成自己的初始化阶段，加入一级缓存中。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-Autowires和-Resource注解的区别"><a href="#5-Autowires和-Resource注解的区别" class="headerlink" title="5.@Autowires和@Resource注解的区别"></a>5.@Autowires和@Resource注解的区别</h3><ul>
+<li><p>@Autowired</p>
+<ul>
+<li><p>Spring提供的注解；</p>
+</li>
+<li><p>默认按类型注入（byType），出现冲突后会按名称注入（byName）；</p>
+</li>
+<li><p>按类型装配依赖对象，默认情况下他要求依赖对象必须存在，如果允许null，可以设置它required属性为false，如果想按名称装配，可以结合@Qualifier注解一起使用。</p>
+<p>一个接口有多个实现类的情况下，byType会出现歧义，然后根据byName注入，假如找不到，则报错。</p>
+<p><strong>解决方案</strong>：1.将注入的对象命名为实现类的名字</p>
+<p>​					2.配合@Qualifier，指定要注入的对象的名字</p>
+<p>​					3.配合@Primary，在一个类上面加@Primary，意思是当犹豫不决是那种类型的时候，就会					选带了这个注解的</p>
+</li>
+</ul>
+</li>
+<li><p>@Resource</p>
+<ul>
+<li>JDK提供的注解</li>
+<li>默认按名称注入（byName），也支持类型注入（byType）</li>
+<li>有两个属性：name和type。如果没有指定name属性，当注解标注在字段&#x2F;属性的setter方法上，就按字段&#x2F;属性名来寻找依赖对象。</li>
+<li>如果没有指定name属性，按照默认的名称找不到依赖对象时，会退回到按类型装配。但一旦指定了name，就只能按名称装配。</li>
+</ul>
+</li>
+<li><p>当一个接口存在多个实现类的情况下，<code>@Autowired</code> 和<code>@Resource</code>都需要通过名称才能正确匹配到对应的 Bean。<code>Autowired</code> 可以通过 <code>@Qualifier</code> 注解来显示指定名称，<code>@Resource</code>可以通过 <code>name</code> 属性来显示指定名称。</p>
+</li>
+</ul>
+<h3 id="6-谈谈自己对于-Spring-IoC-的了解"><a href="#6-谈谈自己对于-Spring-IoC-的了解" class="headerlink" title="6.谈谈自己对于 Spring IoC 的了解"></a>6.谈谈自己对于 Spring IoC 的了解</h3><p><strong>IoC（Inverse of Control:控制反转）</strong> 是一种设计思想，而不是一个具体的技术实现。IoC 的思想就是将原本在程序中手动创建对象的控制权，交由 Spring 框架来管理。</p>
+<ul>
+<li><p>在不采用这种思想的情况下，我们需要自已维护对象与对象之间的依赖关系，很容易造成对象之间的耦合度过高,在一个大型的项目中这十分的不利于代码的维护。IOC则可以解决这种问题，它可以帮我们维护对象与对象之间的依赖关系，降低对象之间的耦合度。</p>
+</li>
+<li><p>说到IOC就不得不说DI，DI是 依赖注入的意思，它是IOC实现的实现方式，就是说IOC是通过DI来实现的。由于IOC这个词汇比较抽象而DI却更直观，所以很多时候我们就用DI来代替它，在很多时候我们简单地将IOC和DI划等号，这是一种习惯。而实现依赖注入的关键是IoC容器，它的本质就是一个工厂.</p>
+</li>
+<li><p><strong>控制</strong> ：指的是对象创建（实例化、管理）的权力</p>
+</li>
+<li><p><strong>反转</strong> ：控制权交给外部环境（Spring 框架、IoC 容器）</p>
+</li>
+</ul>
+<p>IOC的实现方式是依赖注入：1.构造注入 2. setter方法注入 3.接口注入（调用者实现指定的接口）</p>
+<img src="/2022/10/13/spring/frc-365faceb5697f04f31399937c059c162.png" class="">
+
+<p>将对象之间的相互依赖关系交给 IoC 容器来管理，并由 IoC 容器完成对象的注入。这样可以很大程度上简化应用的开发，把应用从复杂的依赖关系中解放出来。</p>
+<p>在 Spring 中，IoC容器是 Spring 用来实现 IoC 的载体，IoC 容器实际上就是个 Map（key，value），Map 中存放的是各种对象。</p>
+<img src="/2022/10/13/spring/image-20220324160057902.png" class="">
+
+<h3 id="7-谈谈自己对于-AOP-的了解"><a href="#7-谈谈自己对于-AOP-的了解" class="headerlink" title="7.谈谈自己对于 AOP 的了解"></a>7.谈谈自己对于 AOP 的了解</h3><p>AOP(Aspect-Oriented Programming:面向切面编程)是一种编程思想，面向对象编程将程序抽象成各个层次的对象，面向切面编程是将程序抽象成各个切面。</p>
+<p>所谓切面，相当于对象间的横切点，我们可以将其抽象为单独的模块。在多个纵向（顺序）流程中出现相同的子流程代码，这些代码称为横切逻辑代码，也是切面。</p>
+<p>能够将那些与业务无关，却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来，便于减少系统的重复代码，降低模块间的耦合度，并有利于未来的可拓展性和可维护性。</p>
+<p>Spring AOP 就是基于<strong>动态代理</strong>的，如果要代理的对象，实现了某个接口，那么 Spring AOP 会使用 <strong>JDK Proxy</strong>，去创建代理对象，而对于没有实现接口的对象，就无法使用 JDK Proxy 去进行代理了，这时候 Spring AOP 会使用 <strong>Cglib</strong> 生成一个被代理对象的子类（继承）来作为代理，如下图所示：</p>
+<img src="/2022/10/13/spring/926dfc549b06d280a37397f9fd49bf9d.jpg" class="">
+
+<p>当然也可以使用 <strong>AspectJ</strong> ！Spring AOP 已经集成了 AspectJ ，AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了。</p>
+<ul>
+<li>PS：AOP的应用场景：<ul>
+<li>通过AOP实现应用程序的日志功能；</li>
+<li>在Spring内部，一些支持模块也是通过AOP来实现的，比如事务处理。</li>
+</ul>
+</li>
+<li>AOP只能对IOC容器中的Bean进行增强，对于不受容器管理的对象不能增强。</li>
+<li>由于CGlib采用动态创建子类的方式生成代理对象，所以不能对final修饰的类进行代理。</li>
+</ul>
+<h4 id="既然有CGlib，为什么Spring还要使用JDK动态代理呢？"><a href="#既然有CGlib，为什么Spring还要使用JDK动态代理呢？" class="headerlink" title="既然有CGlib，为什么Spring还要使用JDK动态代理呢？"></a><strong>既然有CGlib，为什么Spring还要使用JDK动态代理呢？</strong></h4><ul>
+<li>CGlib创建对象的性能高，但是耗时长。</li>
+<li>对于单例的对象无需频繁创建代理对象，采用CGlib比较合适。</li>
+<li>而对于多例的对象，则选择JDK动态代理更合适。</li>
+</ul>
+<h4 id="AOP-领域中的特性术语"><a href="#AOP-领域中的特性术语" class="headerlink" title="AOP 领域中的特性术语"></a><strong>AOP 领域中的特性术语</strong></h4><ul>
+<li><strong>通知</strong>（Advice）: AOP 框架中的增强处理。通知描述了切面何时执行以及如何执行增强处理。</li>
+<li><strong>连接点</strong>（join point）: 连接点表示应用执行过程中能够插入切面的一个点，这个点可以是方法的调用、异常的抛出。在 Spring AOP 中，连接点总是方法的调用。</li>
+<li><strong>切点</strong>（PointCut）: 可以插入增强处理的连接点。比如所有的controller，切点就是@Pointcut(“within(com.test.act.web..*) “)</li>
+<li><strong>切面</strong>（Aspect）: 切面是通知和切点的结合。</li>
+<li><strong>引入</strong>（Introduction）：引入允许我们向现有的类添加新的方法或者属性。</li>
+<li><strong>织入</strong>（Weaving）: 将增强处理添加到目标对象中，并创建一个被增强的对象，这个过程就是织入。</li>
+</ul>
+<h4 id="13-AOP的实现方式"><a href="#13-AOP的实现方式" class="headerlink" title="13.AOP的实现方式"></a>13.AOP的实现方式</h4><ul>
+<li>JDK动态代理：这是Java提供的动态代理技术，可以在运行时创建接口的代理实例。Spring AOP默认采用这种方式，在接口的代理实例中织入代码。</li>
+<li>CGLib动态代理：采用底层的字节码技术，在运行时创建子类代理的实例。当目标对象不存在接口时，Spring AOP就会采用这种方式，在子类实例中织入代码。</li>
+</ul>
+<h4 id="14-Spring-AOP-和-AspectJ-AOP-有什么区别？"><a href="#14-Spring-AOP-和-AspectJ-AOP-有什么区别？" class="headerlink" title="14.Spring AOP 和 AspectJ AOP 有什么区别？"></a>14.Spring AOP 和 AspectJ AOP 有什么区别？</h4><p><strong>Spring AOP 属于运行时增强，而 AspectJ 是编译时增强。</strong> Spring AOP 基于代理(Proxying)，而 AspectJ 基于字节码操作(Bytecode Manipulation)。</p>
+<p>Spring AOP 已经集成了 AspectJ ，AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了。AspectJ 相比于 Spring AOP 功能更加强大，但是 Spring AOP 相对来说更简单，</p>
+<p>如果我们的切面比较少，那么两者性能差异不大。但是，当切面太多的话，最好选择 AspectJ ，它比 Spring AOP 快很多。</p>
+<h3 id="8-Spring中一个请求经过拦截器、过滤器、Aop的顺序"><a href="#8-Spring中一个请求经过拦截器、过滤器、Aop的顺序" class="headerlink" title="8.Spring中一个请求经过拦截器、过滤器、Aop的顺序"></a>8.Spring中一个请求经过拦截器、过滤器、Aop的顺序</h3><p><strong>过滤器拦截的是URL请求，并没有定义业务逻辑执行的前后，仅仅是请求到达就执行。</strong></p>
+<p><strong>拦截器拦截的是URL请求，有被拦截逻辑执行前后。</strong></p>
+<p><strong>Aop能够针对具体的代码，实现更加复杂的业务逻辑。</strong></p>
+<p>三者功能类似，但各有优势，从过滤器–》拦截器–》切面，拦截规则越来越细致，<strong>执行顺序依次是过滤器、拦截器、切面。</strong>一般情况下数据被过滤的时机越早对服务的性能影响越小，因此我们在编写相对比较公用的代码时，优先考虑过滤器，然后是拦截器，最后是aop。比如权限校验，一般情况下，所有的请求都需要做登陆校验，此时就应该使用过滤器在最顶层做校验；日志记录，一般日志只会针对部分逻辑做日志记录，而且牵扯到业务逻辑完成前后的日志记录，因此使用过滤器不能细致地划分模块，此时应该考虑拦截器，然而拦截器也是依据URL做规则匹配，因此相对来说不够细致，因此我们会考虑到使用AOP实现，AOP可以针对代码的方法级别做拦截，很适合日志功能。</p>
+<h3 id="9-Spring-框架中用到了哪些设计模式？"><a href="#9-Spring-框架中用到了哪些设计模式？" class="headerlink" title="9.Spring 框架中用到了哪些设计模式？"></a>9.Spring 框架中用到了哪些设计模式？</h3><p>关于下面一些设计模式的详细介绍，可以看笔主前段时间的原创文章<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247485303&idx=1&sn=9e4626a1e3f001f9b0d84a6fa0cff04a&chksm=cea248bcf9d5c1aaf48b67cc52bac74eb29d6037848d6cf213b0e5466f2d1fda970db700ba41&token=255050878&lang=zh_CN#rd">《面试官:“谈谈 Spring 中都用到了那些设计模式?”。》</a> 。</p>
+<ul>
+<li><strong>工厂设计模式</strong> : Spring 使用工厂模式通过 <code>BeanFactory</code>、<code>ApplicationContext</code> 创建 bean 对象。</li>
+<li><strong>代理设计模式</strong> : Spring AOP功能的实现。</li>
+<li><strong>单例设计模式</strong> : Spring 中的 Bean 默认都是单例的。</li>
+<li><strong>模板方法模式</strong> : Spring 中 <code>jdbcTemplate</code>、<code>hibernateTemplate</code> 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式。</li>
+<li><strong>包装器设计模式</strong> : 我们的项目需要连接多个数据库，而且不同的客户在每次访问中根据需要会去访问不同的数据库。这种模式让我们可以根据客户的需求能够动态切换不同的数据源。</li>
+<li><strong>观察者模式:</strong> Spring 事件驱动模型就是观察者模式很经典的一个应用。</li>
+<li><strong>适配器模式</strong> : Spring AOP 的增强或通知(Advice)使用到了适配器模式、spring MVC 中也是用到了适配器模式适配<code>Controller</code>。</li>
+<li>……</li>
+</ul>
+<p><strong>代理模式和装饰者模式</strong></p>
+<p>让别人帮助你做你并不关心的事情，叫<strong>代理模式</strong></p>
+<p>为让自己的能力增强，使得增强后的自己能够使用更多的方法，拓展在自己基础之上的功能的，叫<strong>装饰器模式</strong></p>
+<p>1、装饰器模式强调的是增强自身，在被装饰之后你能够在被增强的类上使用增强后的功能。增强后你还是你，只不过能力更强了而已；代理模式强调要让别人帮你去做一些本身与你业务没有太多关系的职责（记录日志、设置缓存）。代理模式是为了实现对象的控制，因为被代理的对象往往难以直接获得或者是其内部不想暴露出来。</p>
+<p>2、装饰模式是以对客户端透明的方式扩展对象的功能，是继承方案的一个替代方案；代理模式则是给一个对象提供一个代理对象，并由代理对象来控制对原有对象的引用；</p>
+<p>3、装饰模式是为装饰的对象增强功能；而代理模式对代理的对象施加控制，但不对对象本身的功能进行增强；</p>
+<h3 id="10-工厂设计模式"><a href="#10-工厂设计模式" class="headerlink" title="10.工厂设计模式"></a>10.工厂设计模式</h3><p>Spring使用工厂模式可以通过 <code>BeanFactory</code> 或 <code>ApplicationContext</code> 创建 bean 对象。</p>
+<p><strong>两者对比：</strong></p>
+<ul>
+<li><code>BeanFactory</code> ：延迟注入(使用到某个bean的时候才会注入),相比于<code>ApplicationContext</code> 来说会占用更少的内存，程序启动速度更快。</li>
+<li><code>ApplicationContext</code> ：容器启动的时候，不管你用没用到，一次性创建所有 bean 。<code>BeanFactory</code> 仅提供了最基本的依赖注入支持，<code> ApplicationContext</code> 扩展了 <code>BeanFactory</code> ,除了有<code>BeanFactory</code>的功能还有额外更多功能，所以一般开发人员使用<code> ApplicationContext</code>会更多。</li>
+</ul>
+<p>ApplicationContext的三个实现类：</p>
+<ol>
+<li><code>ClassPathXmlApplication</code>：把上下文文件当成类路径资源。</li>
+<li><code>FileSystemXmlApplication</code>：从文件系统中的 XML文件载入上下文定义信息。</li>
+<li><code>XmlWebApplicationContext</code>：从Web系统中的XML文件载入上下文定义信息。</li>
+</ol>
+<h3 id="11-单例模式"><a href="#11-单例模式" class="headerlink" title="11.单例模式"></a>11.单例模式</h3><p>属于创建类型的一种常用的软件设计模式。这种模式涉及到一个单一的类，该类负责创建自己的对象，同时确保只有单个对象被创建。这个类提供了一种访问其唯一的对象的方式，可以直接访问，不需要实例化该类的对象。</p>
+<p><strong>Spring 通过 <code>ConcurrentHashMap</code> 实现单例注册表的特殊方式实现单例模式。</strong></p>
+<p><strong>注意：</strong></p>
+<ul>
+<li>1、单例类只能有一个实例。</li>
+<li>2、单例类必须自己创建自己的唯一实例。</li>
+<li>3、单例类必须给所有其他对象提供这一实例。</li>
+</ul>
+<h3 id="12-Spring自动装配"><a href="#12-Spring自动装配" class="headerlink" title="12.Spring自动装配"></a>12.Spring自动装配</h3><p>一个Java类中，假如依赖其他的对象（Bean类型的属性），那么就去容器中寻找这个Bean，然后自动注入到当前的实例中。</p>
+<h3 id="22-模板方法"><a href="#22-模板方法" class="headerlink" title="22.模板方法"></a>22.模板方法</h3><p>模板方法模式是一种行为设计模式，它定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。 模板方法使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤的实现方式。</p>
+<p>Spring 中 <code>jdbcTemplate</code>、<code>hibernateTemplate</code> 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式。一般情况下，我们都是使用继承的方式来实现模板模式，但是 Spring 并没有使用这种方式，而是使用Callback 模式与模板方法模式配合，既达到了代码复用的效果，同时增加了灵活性。</p>
+<h3 id="23-Spring-事务"><a href="#23-Spring-事务" class="headerlink" title="23.Spring 事务"></a>23.Spring 事务</h3><p>Spring&#x2F;SpringBoot 模块下专门有一篇是讲 Spring 事务的，总结的非常详细，通俗易懂。</p>
+<h4 id="Spring-管理事务的方式有几种？"><a href="#Spring-管理事务的方式有几种？" class="headerlink" title="Spring 管理事务的方式有几种？"></a>Spring 管理事务的方式有几种？</h4><ul>
+<li><strong>编程式事务</strong> ： 在代码中硬编码(不推荐使用) : 通过 <code>TransactionTemplate</code>或者 <code>TransactionManager</code> 手动管理事务，实际应用中很少使用，但是对于你理解 Spring 事务管理原理有帮助。</li>
+<li><strong>声明式事务</strong> ： 在 XML 配置文件中配置或者直接基于注解（推荐使用） : 实际是通过 AOP 实现（基于<code>@Transactional</code> 的全注解方式使用最多）</li>
+</ul>
+<h4 id="Spring-事务中哪几种事务传播行为"><a href="#Spring-事务中哪几种事务传播行为" class="headerlink" title="Spring 事务中哪几种事务传播行为?"></a>Spring 事务中哪几种事务传播行为?</h4><p><strong>事务传播行为是为了解决业务层方法之间互相调用的事务问题</strong>。</p>
+<p>当事务方法被另一个事务方法调用时，必须指定事务应该如何传播。例如：方法可能继续在现有事务中运行，也可能开启一个新事务，并在自己的事务中运行。</p>
+<p>正确的事务传播行为可能的值如下:</p>
+<p><strong>1.<code>TransactionDefinition.PROPAGATION_REQUIRED</code></strong></p>
+<p>使用的最多的一个事务传播行为，我们平时经常使用的<code>@Transactional</code>注解默认使用就是这个事务传播行为。如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。</p>
+<p><strong><code>2.TransactionDefinition.PROPAGATION_REQUIRES_NEW</code></strong></p>
+<p>创建一个新的事务，如果当前存在事务，则把当前事务挂起。也就是说不管外部方法是否开启事务，<code>Propagation.REQUIRES_NEW</code>修饰的内部方法会新开启自己的事务，且开启的事务相互独立，互不干扰。</p>
+<p><strong>3.<code>TransactionDefinition.PROPAGATION_NESTED</code></strong></p>
+<p>如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于<code>TransactionDefinition.PROPAGATION_REQUIRED</code>。</p>
+<p><strong>4.<code>TransactionDefinition.PROPAGATION_MANDATORY</code></strong></p>
+<p>如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常。（mandatory：强制性）</p>
+<p>这个使用的很少。</p>
+<p>若是错误的配置以下 3 种事务传播行为，事务将不会发生回滚：</p>
+<ul>
+<li><strong><code>TransactionDefinition.PROPAGATION_SUPPORTS</code></strong>: 如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行。</li>
+<li><strong><code>TransactionDefinition.PROPAGATION_NOT_SUPPORTED</code></strong>: 以非事务方式运行，如果当前存在事务，则把当前事务挂起。</li>
+<li><strong><code>TransactionDefinition.PROPAGATION_NEVER</code></strong>: 以非事务方式运行，如果当前存在事务，则抛出异常。</li>
+</ul>
+<h4 id="Spring-事务中的隔离级别有哪几种"><a href="#Spring-事务中的隔离级别有哪几种" class="headerlink" title="Spring 事务中的隔离级别有哪几种?"></a>Spring 事务中的隔离级别有哪几种?</h4><p>和事务传播行为这块一样，为了方便使用，Spring 也相应地定义了一个枚举类：<code>Isolation</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">Isolation</span> &#123;</span><br><span class="line"></span><br><span class="line">    DEFAULT(TransactionDefinition.ISOLATION_DEFAULT),</span><br><span class="line"></span><br><span class="line">    READ_UNCOMMITTED(TransactionDefinition.ISOLATION_READ_UNCOMMITTED),</span><br><span class="line"></span><br><span class="line">    READ_COMMITTED(TransactionDefinition.ISOLATION_READ_COMMITTED),</span><br><span class="line"></span><br><span class="line">    REPEATABLE_READ(TransactionDefinition.ISOLATION_REPEATABLE_READ),</span><br><span class="line"></span><br><span class="line">    SERIALIZABLE(TransactionDefinition.ISOLATION_SERIALIZABLE);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> value;</span><br><span class="line"></span><br><span class="line">    Isolation(<span class="type">int</span> value) &#123;</span><br><span class="line">        <span class="built_in">this</span>.value = value;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">value</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.value;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面我依次对每一种事务隔离级别进行介绍：</p>
+<ul>
+<li><strong><code>TransactionDefinition.ISOLATION_DEFAULT</code></strong> :使用后端数据库默认的隔离级别，MySQL 默认采用的 <code>REPEATABLE_READ</code> 隔离级别 Oracle 默认采用的 <code>READ_COMMITTED</code> 隔离级别.</li>
+<li><strong><code>TransactionDefinition.ISOLATION_READ_UNCOMMITTED</code></strong> :最低的隔离级别，使用这个隔离级别很少，因为它允许读取尚未提交的数据变更，<strong>可能会导致脏读、幻读或不可重复读</strong></li>
+<li><strong><code>TransactionDefinition.ISOLATION_READ_COMMITTED</code></strong> : 允许读取并发事务已经提交的数据，<strong>可以阻止脏读，但是幻读或不可重复读仍有可能发生</strong></li>
+<li><strong><code>TransactionDefinition.ISOLATION_REPEATABLE_READ</code></strong> : 对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，<strong>可以阻止脏读和不可重复读，但幻读仍有可能发生。</strong></li>
+<li><strong><code>TransactionDefinition.ISOLATION_SERIALIZABLE</code></strong> : 最高的隔离级别，完全服从 ACID 的隔离级别。所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，<strong>该级别可以防止脏读、不可重复读以及幻读</strong>。但是这将严重影响程序的性能。通常情况下也不会用到该级别。</li>
+</ul>
+<h4 id="Transactional-rollbackFor-x3D-Exception-class-注解了解吗？"><a href="#Transactional-rollbackFor-x3D-Exception-class-注解了解吗？" class="headerlink" title="@Transactional(rollbackFor &#x3D; Exception.class)注解了解吗？"></a>@Transactional(rollbackFor &#x3D; Exception.class)注解了解吗？</h4><p><code>Exception</code> 分为运行时异常 <code>RuntimeException</code> 和非运行时异常。事务管理对于企业应用来说是至关重要的，即使出现异常情况，它也可以保证数据的一致性。</p>
+<p>当 <code>@Transactional</code> 注解作用于类上时，该类的所有 public 方法将都具有该类型的事务属性，同时，我们也可以在方法级别使用该标注来覆盖类级别的定义。如果类或者方法加了这个注解，那么这个类里面的方法抛出异常，就会回滚，数据库里面的数据也会回滚。</p>
+<p>在 <code>@Transactional</code> 注解中如果不配置<code>rollbackFor</code>属性,那么事务只会在遇到<code>RuntimeException</code>的时候才会回滚，加上 <code>rollbackFor=Exception.class</code>,可以让事务在遇到非运行时异常时也回滚。</p>
+<h3 id="24-Spring-框架中用到了哪些设计模式"><a href="#24-Spring-框架中用到了哪些设计模式" class="headerlink" title="24.Spring 框架中用到了哪些设计模式"></a>24.Spring 框架中用到了哪些设计模式</h3><ul>
+<li><strong>工厂设计模式</strong> : Spring 使用工厂模式通过 <code>BeanFactory</code>、<code>ApplicationContext</code> 创建 bean 对象。</li>
+<li><strong>代理设计模式</strong> : Spring AOP 功能的实现。</li>
+<li><strong>单例设计模式</strong> : Spring 中的 Bean 默认都是单例的。</li>
+<li><strong>模板方法模式</strong> : Spring 中 <code>jdbcTemplate</code>、<code>hibernateTemplate</code> 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式。</li>
+<li><strong>包装器设计模式</strong> : 我们的项目需要连接多个数据库，而且不同的客户在每次访问中根据需要会去访问不同的数据库。这种模式让我们可以根据客户的需求能够动态切换不同的数据源。</li>
+<li><strong>观察者模式:</strong> Spring 事件驱动模型就是观察者模式很经典的一个应用。</li>
+<li><strong>适配器模式</strong> : Spring AOP 的增强或通知(Advice)使用到了适配器模式、spring MVC 中也是用到了适配器模式适配<code>Controller</code>。</li>
+</ul>
+<h3 id="25-AOP、拦截器、过滤器"><a href="#25-AOP、拦截器、过滤器" class="headerlink" title="25.AOP、拦截器、过滤器"></a>25.AOP、拦截器、过滤器</h3><h4 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h4><p><strong>过滤器</strong>：基于 Servlet，通过函数回调方式实现，可以过滤请求和图片文件等，每个请求一个过滤器只能过滤一次。</p>
+<p><strong>拦截器</strong>：基于 java 的反射机制，代理模式实现，只能拦截请求，可以访问上下文等对象，功能强大，一个请求可多次拦截。</p>
+<p>拦截器是 Spring 中AOP的一种实现方法。另一种方法通过 Pointcut、Advice实现</p>
+<h4 id="1）AOP"><a href="#1）AOP" class="headerlink" title="1）AOP"></a>1）AOP</h4><p>AOP是面向切面编程，AOP的基本单元是Aspect(切面)</p>
+<h4 id="2）拦截器"><a href="#2）拦截器" class="headerlink" title="2）拦截器"></a>2）拦截器</h4><p>拦截器是在Service或者一个方法前调用一个方法，或者在方法后调用一个方法。比如动态代理就是拦截器的简单实现，在你调用方法前打印出字符串（或者做其它业务逻辑的操作），也可以在你调用方法后打印出字符串，甚至在你抛出异常的时候做业务逻辑的操作。</p>
+<p><strong>特点</strong></p>
+<ul>
+<li>拦截器是基于java反射机制实现的</li>
+<li>拦截器是spring特有的，能使用Spring里的任何资源、对象，例如Service对象、数据源、事务管理等</li>
+<li>拦截器既可以用于Web程序，也可以用于Application、Swing程序中</li>
+<li>拦截器能够深入到方法前后、异常抛出前后，伸缩性较大</li>
+</ul>
+<h4 id="3）过滤器"><a href="#3）过滤器" class="headerlink" title="3）过滤器"></a>3）过滤器</h4><p>Filter 过滤器是 JavaWeb 的三大组件之一。（Servlet、Filter、Listener）；Filter 过滤器它是 JavaEE 的规范，可以<strong>在浏览器以及目标资源之间起到一个过滤的作用</strong>，它的<strong>作用</strong>是：拦截请求，过滤响应；</p>
+<p><strong>web 中的过滤器</strong>：当访问服务器的资源时，过滤器可以将请求拦截下来，完成一些特殊的功能。Filter过滤器主要用来过滤用户的请求，允许用户对请求进行前置处理和后置处理，比如实现 URL 级别的权限控制、过滤非法请求等等。</p>
+<p><strong>特点</strong></p>
+<ul>
+<li>Filter是基于回调函数</li>
+<li>Filter是Servlet规范固定的，只能用于Web程序中</li>
+<li>Filter在只在Servlet启动前后起作用，范围较窄</li>
+</ul>
+<h4 id="4）过滤器与拦截器的联系与区别"><a href="#4）过滤器与拦截器的联系与区别" class="headerlink" title="4）过滤器与拦截器的联系与区别"></a>4）过滤器与拦截器的联系与区别</h4><ul>
+<li>拦截器是基于java的反射机制，使用代理模式，而过滤器是基于函数回调。</li>
+<li>拦截器不依赖servlet容器，过滤器依赖于servlet容器。</li>
+<li>拦截器只能对action起作用，而过滤器可以对几乎所有的请求起作用（可以保护资源）。</li>
+<li>拦截器可以访问action上下文，堆栈里面的对象，而过滤器不可以。</li>
+<li>执行顺序：过滤前-拦截前-Action处理-拦截后-过滤后。</li>
+</ul>
+<h4 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h4><p><strong>过滤器 → 拦截器 → 切面</strong></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/10/13/spring/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2022/10/12/linux/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">linux</div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2022
+        <i class="ri-heart-fill heart_icon"></i> pp-lv
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.png" alt="LPL&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">Home</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">Archives</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">Categories</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">Tags</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">About</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i></p>
+  <div class="reward-box">
+    
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
