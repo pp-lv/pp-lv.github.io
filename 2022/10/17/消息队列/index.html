@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>消息队列 |  LPL&#39;s Blog</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-消息队列"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  消息队列
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" class="article-date">
+  <time datetime="2022-10-17T07:21:38.000Z" itemprop="datePublished">2022-10-17</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">6k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">21 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>消息队列是消息在传递过程中保存消息的容器。</p>
+<h2 id="1-为什么要用消息队列"><a href="#1-为什么要用消息队列" class="headerlink" title="1.为什么要用消息队列"></a>1.为什么要用消息队列</h2><p>通常来说，使用消息队列能为我们的系统带来下面三点好处：</p>
+<ol>
+<li><p><strong>通过异步处理提高系统性能（减少响应所需时间）。</strong></p>
+<p>将用户的请求数据存储到消息队列之后就立即返回结果。随后，系统再对消息进行消费。</p>
+</li>
+<li><p><strong>削峰&#x2F;限流</strong></p>
+<p>先将短时间高并发产生的事务消息存储在消息队列中，然后后端服务再慢慢根据自己的能力去消费这些消息，这样就避免直接把后端服务打垮掉。</p>
+</li>
+<li><p><strong>降低系统耦合性。</strong></p>
+<p>生产者（客户端）发送消息到消息队列中去，接受者（服务端）处理消息，需要消费的系统直接去消息队列取消息进行消费即可而不需要和其他系统有耦合，这显然也提高了系统的扩展性。</p>
+</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="2-常见消息队列的对比"><a href="#2-常见消息队列的对比" class="headerlink" title="2.常见消息队列的对比"></a>2.常见消息队列的对比</h2><table>
+<thead>
+<tr>
+<th align="center">对比方向</th>
+<th align="center">概要</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">吞吐量</td>
+<td align="center">万级的 ActiveMQ 和 RabbitMQ 的吞吐量（ActiveMQ 的性能最差）要比 十万级甚至是百万级的 RocketMQ 和 Kafka 低一个数量级。</td>
+</tr>
+<tr>
+<td align="center">可用性</td>
+<td align="center">都可以实现高可用。ActiveMQ 和 RabbitMQ 都是基于主从架构实现高可用性。RocketMQ 基于分布式架构。 kafka 也是分布式的，一个数据多个副本，少数机器宕机，不会丢失数据，不会导致不可用</td>
+</tr>
+<tr>
+<td align="center">时效性</td>
+<td align="center">RabbitMQ 基于 erlang 开发，所以并发能力很强，性能极其好，延时很低，达到微秒级。其他三个都是 ms 级。</td>
+</tr>
+<tr>
+<td align="center">功能支持</td>
+<td align="center">除了 Kafka，其他三个功能都较为完备。 Kafka 功能较为简单，主要支持简单的 MQ 功能，在大数据领域的实时计算以及日志采集被大规模使用，是事实上的标准</td>
+</tr>
+<tr>
+<td align="center">消息丢失</td>
+<td align="center">ActiveMQ 和 RabbitMQ 丢失的可能性非常低， RocketMQ 和 Kafka 理论上不会丢失。</td>
+</tr>
+</tbody></table>
+<p><strong>总结：</strong></p>
+<ul>
+<li>ActiveMQ 的社区算是比较成熟，但是较目前来说，ActiveMQ 的性能比较差，而且版本迭代很慢，不推荐使用。</li>
+<li>RabbitMQ 在<strong>吞吐量</strong>方面虽然稍逊于 Kafka 和 RocketMQ ，但是由于它基于 erlang 开发，所以<strong>并发能力</strong>很强，性能极其好，延时很低，达到微秒级。但是也因为 RabbitMQ 基于 erlang 开发，所以国内很少有公司有实力做 erlang 源码级别的研究和定制。如果业务场景对并发量要求不是太高（十万级、百万级），那这四种消息队列中，RabbitMQ 一定是你的首选。如果是大数据领域的实时计算、<strong>日志采集等场景，用 Kafka 是业内标准的</strong>，绝对没问题，社区活跃度很高，绝对不会黄，何况几乎是全世界这个领域的事实性规范。</li>
+<li>RocketMQ 阿里出品，Java 系开源项目，源代码我们可以直接阅读，然后可以定制自己公司的 MQ，并且 RocketMQ 有阿里巴巴的实际业务场景的实战考验。RocketMQ 社区活跃度相对较为一般，不过也还可以，文档相对来说简单一些，然后接口这块不是按照标准 JMS 规范走的有些系统要迁移需要修改大量代码。还有就是阿里出台的技术，你得做好这个技术万一被抛弃，社区黄掉的风险，那如果你们公司有技术实力我觉得用 RocketMQ 挺好的。</li>
+<li>Kafka 的特点其实很明显，就是仅仅提供较少的核心功能，但是提供<strong>超高的吞吐量</strong>，ms 级的延迟，极高的可用性以及可靠性，而且分布式可以任意扩展。同时 kafka 最好是支撑较少的 topic 数量即可，保证其超高吞吐量。<strong>kafka 唯一的一点劣势是有可能消息重复消费</strong>，那么对数据准确性会造成极其轻微的影响，在大数据领域中以及日志采集中，这点轻微影响可以忽略，这个特性天然适合大数据实时计算以及日志收集。</li>
+</ul>
+<h2 id="3-Kafka"><a href="#3-Kafka" class="headerlink" title="3.Kafka"></a>3.Kafka</h2><p>Kafka 是一个分布式流式处理平台。</p>
+<ol>
+<li><strong>消息队列</strong>：发布和订阅消息流，这个功能类似于消息队列，这也是 Kafka 也被归类为消息队列的原因。</li>
+<li><strong>容错的持久方式存储记录消息流</strong>： Kafka 会把消息持久化到磁盘，有效避免了消息丢失的风险。</li>
+<li><strong>流式处理平台：</strong> 在消息发布的时候进行处理，Kafka 提供了一个完整的流式处理类库。</li>
+</ol>
+<p>Kafka 主要有两大应用场景：</p>
+<ol>
+<li><strong>消息队列</strong> ：建立实时流数据管道，以可靠地在系统或应用程序之间获取数据。</li>
+<li><strong>数据处理：</strong> 构建实时的流数据处理程序来转换或处理数据流。</li>
+</ol>
+<h3 id="消息模型"><a href="#消息模型" class="headerlink" title="消息模型"></a>消息模型</h3><p><strong>Kafka采用的发布-订阅模型</strong></p>
+<p>Kafka 将生产者发布的消息发送到 <strong>Topic（主题）</strong> 中，需要这些消息的消费者可以订阅这些 <strong>Topic（主题）</strong>，如下图所示：</p>
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/message-queue20210507200944439.png" class="">
+
+<p>上面这张图也为我们引出了，Kafka 比较重要的几个概念：</p>
+<ol>
+<li><strong>Producer（生产者）</strong> : 产生消息的一方。</li>
+<li><strong>Consumer（消费者）</strong> : 消费消息的一方。</li>
+<li><strong>Broker（代理）</strong> : 可以看作是一个独立的 Kafka 实例。多个 Kafka Broker 组成一个 Kafka Cluster。</li>
+</ol>
+<p>同时，你一定也注意到每个 Broker 中又包含了 Topic 以及 Partition 这两个重要的概念：</p>
+<ul>
+<li><strong>Topic（主题）</strong> : Producer 将消息发送到特定的主题，Consumer 通过订阅特定的 Topic(主题) 来消费消息。</li>
+<li><strong>Partition（分区）</strong> : Partition 属于 Topic 的一部分。一个 Topic 可以有多个 Partition ，并且同一 Topic 下的 Partition 可以分布在不同的 Broker 上，这也就表明一个 Topic 可以横跨多个 Broker 。</li>
+</ul>
+<blockquote>
+<p>划重点：<strong>Kafka 中的 Partition（分区） 实际上可以对应成为消息队列中的队列。</strong></p>
+</blockquote>
+<p> <strong>Kafka 只能为我们保证 Partition(分区) 中的消息有序。</strong></p>
+<blockquote>
+<p>消息在被追加到 Partition(分区)的时候都会分配一个特定的偏移量（offset）。Kafka 通过偏移量（offset）来保证消息在分区内的顺序性。</p>
+</blockquote>
+<p>对于如何保证 Kafka 中消息消费的顺序，有了下面两种方法：</p>
+<ol>
+<li>1 个 Topic 只对应一个 Partition。</li>
+<li>（推荐）发送消息的时候指定key&#x2F;Partition。</li>
+</ol>
+<h3 id="工作模式"><a href="#工作模式" class="headerlink" title="工作模式"></a>工作模式</h3><ul>
+<li>点对点</li>
+<li>发布订阅</li>
+</ul>
+<h3 id="Kafka如何保证消息不丢失"><a href="#Kafka如何保证消息不丢失" class="headerlink" title="Kafka如何保证消息不丢失"></a>Kafka如何保证消息不丢失</h3><h4 id="生产者丢失消息的情况"><a href="#生产者丢失消息的情况" class="headerlink" title="生产者丢失消息的情况"></a>生产者丢失消息的情况</h4><p>生产者(Producer) 调用<code>send</code>方法发送消息之后，消息可能因为网络问题并没有发送过去。</p>
+<p>为发送添加一个回调函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ListenableFuture&lt;SendResult&lt;String, Object&gt;&gt; future = kafkaTemplate.send(topic, o);</span><br><span class="line">future.addCallback(result -&gt; logger.info(<span class="string">&quot;生产者成功发送消息到topic:&#123;&#125; partition:&#123;&#125;的消息&quot;</span>, result.getRecordMetadata().topic(), result.getRecordMetadata().partition()),</span><br><span class="line">                ex -&gt; logger.error(<span class="string">&quot;生产者发送消失败，原因：&#123;&#125;&quot;</span>, ex.getMessage()));</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="消费者丢失消息"><a href="#消费者丢失消息" class="headerlink" title="消费者丢失消息"></a>消费者丢失消息</h4><p>当消费者拉取到了分区的某个消息之后，消费者会自动提交了 offset。自动提交的话会有一个问题，试想一下，当消费者刚拿到这个消息准备进行真正消费的时候，突然挂掉了，消息实际上并没有被消费，但是 offset 却被自动提交了。</p>
+<p><strong>解决办法也比较粗暴，我们手动关闭自动提交 offset，每次在真正消费完消息之后再自己手动提交 offset 。</strong> 但是，细心的朋友一定会发现，这样会带来消息被重新消费的问题。比如你刚刚消费完消息之后，还没提交 offset，结果自己挂掉了，那么这个消息理论上就会被消费两次。</p>
+<h4 id="Kafka弄丢了消息"><a href="#Kafka弄丢了消息" class="headerlink" title="Kafka弄丢了消息"></a>Kafka弄丢了消息</h4><p>Kafka 为分区（Partition）引入了多副本（Replica）机制。</p>
+<p>假如 leader 副本所在的 broker 突然挂掉，那么就要从 follower 副本重新选出一个 leader ，但是 leader 的数据还有一些没有被 follower 副本的同步的话，就会造成消息丢失。</p>
+<p><strong>解决办法：</strong></p>
+<p><strong>设置 acks &#x3D; all</strong></p>
+<p>解决办法就是我们设置 <strong>acks &#x3D; all</strong>。acks 是 Kafka 生产者(Producer) 很重要的一个参数。</p>
+<p>acks 的默认值即为1，代表我们的消息被leader副本接收之后就算被成功发送。当我们配置 <strong>acks &#x3D; all</strong> 代表则所有副本都要接收到该消息之后该消息才算真正成功被发送。</p>
+<p><strong>设置 replication.factor &gt;&#x3D; 3</strong></p>
+<p>为了保证 leader 副本能有 follower 副本能同步消息，我们一般会为 topic 设置 <strong>replication.factor &gt;&#x3D; 3</strong>。这样就可以保证每个分区(partition) 至少有 3 个副本。虽然造成了数据冗余，但是带来了数据的安全性。</p>
+<p><strong>设置 min.insync.replicas &gt; 1</strong></p>
+<p>一般情况下我们还需要设置 <strong>min.insync.replicas&gt; 1</strong> ，这样配置代表消息至少要被写入到 2 个副本才算是被成功发送。<strong>min.insync.replicas</strong> 的默认值为 1 ，在实际生产中应尽量避免默认值 1。</p>
+<p>但是，为了保证整个 Kafka 服务的高可用性，你需要确保 <strong>replication.factor &gt; min.insync.replicas</strong> 。为什么呢？设想一下假如两者相等的话，只要是有一个副本挂掉，整个分区就无法正常工作了。这明显违反高可用性！一般推荐设置成 <strong>replication.factor &#x3D; min.insync.replicas + 1</strong>。</p>
+<p><strong>设置 unclean.leader.election.enable &#x3D; false</strong></p>
+<h3 id="Kafka-如何保证消息不重复消费"><a href="#Kafka-如何保证消息不重复消费" class="headerlink" title="Kafka 如何保证消息不重复消费"></a>Kafka 如何保证消息不重复消费</h3><p><strong>kafka出现消息重复消费的原因：</strong></p>
+<ul>
+<li>服务端侧已经消费的数据没有成功提交 offset（根本原因）。</li>
+<li>Kafka 侧由于服务端处理业务时间长或者网络链接等等原因让 Kafka 认为服务假死，触发了分区 rebalance。</li>
+</ul>
+<p><strong>解决方案：</strong></p>
+<ul>
+<li><p>消费消息服务做幂等校验，比如 Redis 的set、MySQL 的主键等天然的幂等功能。这种方法最有效。</p>
+</li>
+<li><p>将<code>enable.auto.commit</code>参数设置为 false，关闭自动提交，开发者在代码中手动提交 offset。那么这里会有个问题：</p>
+<p>什么时候提交offset合适？</p>
+<ul>
+<li>处理完消息再提交：依旧有消息重复消费的风险，和自动提交一样</li>
+<li>拉取到消息即提交：会有消息丢失的风险。允许消息延时的场景，一般会采用这种方式。然后，通过定时任务在业务不繁忙（比如凌晨）的时候做数据兜底。</li>
+</ul>
+</li>
+</ul>
+<h3 id="kafka保证数据的顺序性"><a href="#kafka保证数据的顺序性" class="headerlink" title="kafka保证数据的顺序性"></a>kafka保证数据的顺序性</h3><p>​	kafka 写入partion时指定一个key，列如订单id，那么这个订单的相关数据都会被分发到同一个partion中，并且在partion中是有序的（producer发消息到队列时，通过加锁保证有序）。消费者从partion中取出数据的时候肯定是有序的，但是当开启多个线程的时候可能导致数据不一致。</p>
+<p>在消费者端创建多个内存队列queue，具有相同 key 的数据都路由到同一个内存队列；然后每个线程分别消费一个内存队列即可，这样就能保证顺序性。</p>
+<p><strong>kafka：</strong>一个topic，一个partition，一个consumer，内部单线程消费，写N个内存queue，然后N个线程分别消费一个内存queue即可</p>
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/169bde8fd967ab1b_tplv-t2oaga2asx-zoom-in-crop-mark_3024_0_0_0.png" class="">
+
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/169bde8fd989e5a5_tplv-t2oaga2asx-zoom-in-crop-mark_3024_0_0_0.png" class="">
+
+
+
+
+<h2 id="4-RabbitMQ"><a href="#4-RabbitMQ" class="headerlink" title="4.RabbitMQ"></a>4.RabbitMQ</h2><p>RabbitMQ 是采用 Erlang 语言实现 AMQP(Advanced Message Queuing Protocol，高级消息队列协议）的消息中间件</p>
+<p>RabbitMQ 的具体特点可以概括为以下几点：</p>
+<ul>
+<li><strong>可靠性：</strong> RabbitMQ使用一些机制来保证消息的可靠性，如持久化、传输确认及发布确认等。</li>
+<li><strong>灵活的路由：</strong> 在消息进入队列之前，通过交换器来路由消息。对于典型的路由功能，RabbitMQ 己经提供了一些内置的交换器来实现。针对更复杂的路由功能，可以将多个交换器绑定在一起，也可以通过插件机制来实现自己的交换器。这个后面会在我们讲 RabbitMQ 核心概念的时候详细介绍到。</li>
+<li><strong>扩展性：</strong> 多个RabbitMQ节点可以组成一个集群，也可以根据实际业务情况动态地扩展集群中节点。</li>
+<li><strong>高可用性：</strong> 队列可以在集群中的机器上设置镜像，使得在部分节点出现问题的情况下队列仍然可用。</li>
+<li><strong>支持多种协议：</strong> RabbitMQ 除了原生支持 AMQP 协议，还支持 STOMP、MQTT 等多种消息中间件协议。</li>
+<li><strong>多语言客户端：</strong> RabbitMQ几乎支持所有常用语言，比如 Java、Python、Ruby、PHP、C#、JavaScript等。</li>
+<li><strong>易用的管理界面：</strong> RabbitMQ提供了一个易用的用户界面，使得用户可以监控和管理消息、集群中的节点等。在安装 RabbitMQ 的时候会介绍到，安装好 RabbitMQ 就自带管理界面。</li>
+<li><strong>插件机制：</strong> RabbitMQ 提供了许多插件，以实现从多方面进行扩展，当然也可以编写自己的插件。感觉这个有点类似 Dubbo 的 SPI机制。</li>
+</ul>
+<h3 id="模型架构"><a href="#模型架构" class="headerlink" title="模型架构"></a>模型架构</h3><img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/96388546.jpg" class="">
+
+<ul>
+<li><p><strong>Producer(生产者)</strong> :生产消息的一方（邮件投递者）</p>
+</li>
+<li><p><strong>Consumer(消费者)</strong> :消费消息的一方（邮件收件人）</p>
+</li>
+<li><p><strong>Exchange（交换器）</strong>：用来接收生产者发送的消息并将这些消息路由给服务器中的队列中。</p>
+<p>在 RabbitMQ 中，消息并不是直接被投递到 <strong>Queue(消息队列)</strong> 中的，中间还必须经过 <strong>Exchange(交换器)</strong> 这一层，<strong>Exchange(交换器)</strong> 会把我们的消息分配到对应的 <strong>Queue(消息队列)</strong> 中。</p>
+</li>
+</ul>
+<p>RabbitMQ 中通过 <strong>Binding(绑定)</strong> 将 <strong>Exchange(交换器)</strong> 与 <strong>Queue(消息队列)</strong> 关联起来，在绑定的时候一般会指定一个 <strong>BindingKey(绑定建)</strong> ,这样 RabbitMQ 就知道如何正确将消息路由到队列了</p>
+<h3 id="工作模式（五种）"><a href="#工作模式（五种）" class="headerlink" title="工作模式（五种）"></a>工作模式（五种）</h3><ul>
+<li><h5 id="simple简单模式"><a href="#simple简单模式" class="headerlink" title="simple简单模式"></a>simple简单模式</h5><p>在simple模式下我们无需指定交换机，RabbitMQ会通过默认的<code>default AMQP交换机</code>将我们的消息投递到指定的队列，它是一种Direct类型的交换机</p>
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/20181221114009759.png" class="">
+
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/72fbpfcp-zoom-in-crop-mark_4536_0_0_0-1665994469780.png" class="">
+</li>
+<li><h5 id="work工作模式-资源的竞争"><a href="#work工作模式-资源的竞争" class="headerlink" title="work工作模式(资源的竞争)"></a>work工作模式(资源的竞争)</h5><p>RabbitMQ也使用默认的<code>default AMQP交换机</code>，work模式下，多个消费者可以监听同一个队列，这时Queue中的消息会被平均分摊给多个消费者进行处理，而不是每个消费者都收到所有的消息并处理。</p>
+<blockquote>
+<p>work主要有两种模式：</p>
+</blockquote>
+<ul>
+<li><strong>轮询分发</strong>：一个消费者消费一条，<strong>按均分配</strong>，woek模式下默认是采用轮询分发方式。</li>
+<li><strong>公平分发</strong>：根据消费者的消费能力进行公平分发，处理得快的分得多，处理的慢的分得少，<strong>能者多劳</strong>。</li>
+</ul>
+</li>
+</ul>
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/20181221114036231.png" class="">
+
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/c323e46c0_tplv-k3u1fbpfcp-zoom-in-crop-mark_4536_0_0_0-1665994492647.png" class="">
+
+<p><strong>应用场景</strong></p>
+<p>如在一个购物平台中，包含两个订单系统，当用户下后，将下单信息发送到RabbitMQ中，只需要任意一个订单系统从队列中获取订单信息，对用户订单进行处理。</p>
+<ul>
+<li><h5 id="publish-x2F-subscribe发布订阅-共享资源"><a href="#publish-x2F-subscribe发布订阅-共享资源" class="headerlink" title="publish&#x2F;subscribe发布订阅(共享资源)"></a>publish&#x2F;subscribe发布订阅(共享资源)</h5></li>
+</ul>
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/a0242c264be847a3u1fbpfcp-zoom-in-crop-mark_4536_0_0_0-1665993219235.png" class="">
+
+<p><strong>应用场景</strong></p>
+<p>如在一个用户注册服务中，用户提交注册信息后，将信息发送到RabbitMQ中，由短信服务和邮件服务分别中队列中获取用户信息，完成用户注册后的短信和邮件发送。</p>
+<ul>
+<li><h5 id="routing路由模式"><a href="#routing路由模式" class="headerlink" title="routing路由模式"></a>routing路由模式</h5></li>
+</ul>
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/20181221114420299.png" class="">
+
+<ul>
+<li><h5 id="topic-主题模式-路由模式的一种-特点是可以模糊匹配"><a href="#topic-主题模式-路由模式的一种-特点是可以模糊匹配" class="headerlink" title="topic 主题模式(路由模式的一种,特点是可以模糊匹配)"></a>topic 主题模式(路由模式的一种,特点是可以模糊匹配)</h5></li>
+</ul>
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/20181221114208408.png" class="">
+
+<ul>
+<li><h5 id="RPC模式"><a href="#RPC模式" class="headerlink" title="RPC模式"></a>RPC模式</h5></li>
+</ul>
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/f391b77eaff44c4com-in-crop-mark_4536_0_0_0.png" class="">
+
+<p> RPC模式是一种远程过程调用模式</p>
+<h3 id="Queue-消息队列"><a href="#Queue-消息队列" class="headerlink" title="Queue(消息队列)"></a>Queue(消息队列)</h3><p><strong>Queue(消息队列)</strong> 用来保存消息直到发送给消费者。它是消息的容器，也是消息的终点。一个消息可投入一个或多个队列。消息一直在队列里面，等待消费者连接到这个队列将其取走。</p>
+<p><strong>RabbitMQ</strong> 中消息只能存储在 <strong>队列</strong> 中，这一点和 <strong>Kafka</strong> 这种消息中间件相反。</p>
+<p><strong>多个消费者可以订阅同一个队列</strong>，这时队列中的消息会被平均分摊（Round-Robin，即轮询）给多个消费者进行处理，而不是每个消费者都收到所有的消息并处理，这样避免消息被重复消费。</p>
+<p>RabbitMQ<strong>不支持队列层面的广播消费</strong></p>
+<h4 id="Broker（消息中间件的服务节点）"><a href="#Broker（消息中间件的服务节点）" class="headerlink" title="Broker（消息中间件的服务节点）"></a>Broker（消息中间件的服务节点）</h4><p>对于 RabbitMQ 来说，一个 RabbitMQ Broker 可以简单地看作一个 RabbitMQ 服务节点，或者RabbitMQ服务实例。大多数情况下也可以将一个 RabbitMQ Broker 看作一台 RabbitMQ 服务器。</p>
+<p>下图展示了生产者将消息存入 RabbitMQ Broker,以及消费者从Broker中消费数据的整个流程。</p>
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/67952922.jpg" class="">
+
+<h4 id="Exchange-Types-交换器类型"><a href="#Exchange-Types-交换器类型" class="headerlink" title="Exchange Types(交换器类型)"></a>Exchange Types(交换器类型)</h4><p>RabbitMQ 常用的 Exchange Type 有 <strong>fanout</strong>、<strong>direct</strong>、<strong>topic</strong>、<strong>headers</strong> 这四种（AMQP规范里还提到两种 Exchange Type，分别为 system 与 自定义，这里不予以描述）。</p>
+<h5 id="①-fanout"><a href="#①-fanout" class="headerlink" title="① fanout"></a>① fanout</h5><p>fanout 类型的Exchange路由规则非常简单，它会把发送到该Exchange的消息路由到<strong>所有</strong>与它绑定的Queue中(每个队列都收到)，不需要做任何判断操作，所以 fanout 类型是所有的交换机类型里面速度最快的。fanout 类型常用来<strong>广播</strong>消息。</p>
+<h5 id="②-direct"><a href="#②-direct" class="headerlink" title="② direct"></a>② direct</h5><p>direct 类型的Exchange路由规则也很简单，它会把消息路由到那些 Bindingkey 与 RoutingKey 完全匹配的 Queue 中。</p>
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/37008021.jpg" class="">
+
+<p>以上图为例，如果发送消息的时候设置路由键为“warning”,那么消息会路由到 Queue1 和 Queue2。如果在发送消息的时候设置路由键为”Info”或者”debug”，消息只会路由到Queue2。如果以其他的路由键发送消息，则消息不会路由到这两个队列中。</p>
+<p>direct 类型常用在处理有优先级的任务，根据任务的优先级把消息发送到对应的队列，这样可以指派更多的资源去处理高优先级的队列。</p>
+<h5 id="③-topic"><a href="#③-topic" class="headerlink" title="③ topic"></a>③ topic</h5><p>前面讲到direct类型的交换器路由规则是完全匹配 BindingKey 和 RoutingKey ，但是这种严格的匹配方式在很多情况下不能满足实际业务的需求。topic类型的交换器在匹配规则上进行了扩展，它与 direct 类型的交换器相似，也是将消息路由到 BindingKey 和 RoutingKey 相匹配的队列中，但这里的匹配规则有些不同，它约定：</p>
+<ul>
+<li>RoutingKey 为一个点号“．”分隔的字符串（被点号“．”分隔开的每一段独立的字符串称为一个单词），如 “com.rabbitmq.client”、“java.util.concurrent”、“com.hidden.client”;</li>
+<li>BindingKey 和 RoutingKey 一样也是点号“．”分隔的字符串；</li>
+<li>BindingKey 中可以存在两种特殊字符串“ *”和“#”，用于做模糊匹配，其中“ * ”用于匹配一个单词，“#”用于匹配多个单词(可以是零个)。</li>
+</ul>
+<img src="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/73843.jpg" class="">
+
+<p>以上图为例：</p>
+<ul>
+<li>路由键为 “com.rabbitmq.client” 的消息会同时路由到 Queue1 和 Queue2;</li>
+<li>路由键为 “com.hidden.client” 的消息只会路由到 Queue2 中；</li>
+<li>路由键为 “com.hidden.demo” 的消息只会路由到 Queue2 中；</li>
+<li>路由键为 “java.rabbitmq.demo” 的消息只会路由到 Queue1 中；</li>
+<li>路由键为 “java.util.concurrent” 的消息将会被丢弃或者返回给生产者（需要设置 mandatory 参数），因为它没有匹配任何路由键。</li>
+</ul>
+<h5 id="④-headers-不推荐"><a href="#④-headers-不推荐" class="headerlink" title="④ headers(不推荐)"></a>④ headers(不推荐)</h5><p>headers 类型的交换器不依赖于路由键的匹配规则来路由消息，而是根据发送的消息内容中的 headers 属性进行匹配。在绑定队列和交换器时指定一组键值对，当发送消息到交换器时，RabbitMQ会获取到该消息的 headers（也是一个键值对的形式)，对比其中的键值对是否完全匹配队列和交换器绑定时指定的键值对，如果完全匹配则消息会路由到该队列，否则不会路由到该队列。headers 类型的交换器性能会很差，而且也不实用，基本上不会看到它的存在。</p>
+<h3 id="处理消息失败了怎么办？"><a href="#处理消息失败了怎么办？" class="headerlink" title="处理消息失败了怎么办？"></a>处理消息失败了怎么办？</h3><p>一般会设计两个队列：</p>
+<ul>
+<li>核心业务队列：正常处理消息的。</li>
+<li>死信队列：用来处理异常情况的。</li>
+</ul>
+<p>比如说消费者的系统故障了，导致消息发往消费者时失败，如果消息处理失败，MQ就会把这条消息转入死信队列中。一旦发现消费者系统恢复正常，队列就先处理私信队列中的数据。</p>
+<h3 id="如何保证顺序消费"><a href="#如何保证顺序消费" class="headerlink" title="如何保证顺序消费"></a>如何保证顺序消费</h3><ul>
+<li>RabbitMQ：出现顺序错乱的原因通常是消费者集群部署，不同消费者消费到了同一订单的不同的消息。解决办法：可以创建多个queue，每个消费者固定消费一个queue的消息，生产者发送消息的时候，同一订单号的消费发送到同一个queue中。</li>
+</ul>
+<h3 id="保证消息不丢失"><a href="#保证消息不丢失" class="headerlink" title="保证消息不丢失"></a>保证消息不丢失</h3><ul>
+<li><p>RabbitMQ</p>
+<ul>
+<li><p>1）生产者丢数据：<del><strong>方法一</strong>：选择使用RabbitMQ提供的事务功能，就是生产者在发送数据之前开启事务，然后发送消息，如果消息发送失败，就回滚事务。缺点是会阻塞。</del><strong>方法二</strong>：<strong>开启确认模式</strong>，队列收到之后，回传一个ack消息，如果消费者超时没收到ack，就重发。</p>
+<ul>
+<li>Client发送消息给MQ</li>
+<li>MQ将消息持久化后，发送Ack消息给Client，此处有可能因为网络问题导致Ack消息无法发送到Client，那么Client在等待超时后，会重传消息；</li>
+</ul>
+<ol start="3">
+<li>Client收到Ack消息后，认为消息已经投递成功。</li>
+</ol>
+</li>
+<li><p>2）队列丢消息：设置消息持久化到磁盘。创建队列的时候将队列设置为持久化的。可以和确认机制配合使用，只有当消息持久化到磁盘之后，才会通知生产者。</p>
+</li>
+<li><p>3）消费者端丢消息：也使用<strong>ack机制</strong>，当消费者处理完这个消息之后，再回传ack，消费者再删除消息。</p>
+<ul>
+<li>MQ将消息push给Client（或Client来pull消息）</li>
+</ul>
+<ol start="2">
+<li>Client得到消息并做完业务逻辑</li>
+</ol>
+<ul>
+<li>Client发送Ack消息给MQ，通知MQ删除该消息，此处有可能因为网络问题导致Ack失败，那么Client会重复消息，这里就引出消费幂等（<strong>给消费者发送多条同样的消息，消费者只会消费其中的一条</strong>）的问题；</li>
+</ul>
+<ol start="4">
+<li>MQ将已消费的消息删除。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-MQ积压几百万条数据怎么办？"><a href="#5-MQ积压几百万条数据怎么办？" class="headerlink" title="5.MQ积压几百万条数据怎么办？"></a>5.MQ积压几百万条数据怎么办？</h2><p>假如是kafka，则采用临时紧急扩容，具体操作步骤和思路如下：</p>
+<ol>
+<li>先修复consumer的问题，确保其恢复消费速度，然后将现有cnosumer都停掉</li>
+<li>新建一个topic，partition是原来的10倍，临时建立好原先10倍或者20倍的queue数量</li>
+<li>然后写一个临时的分发数据的consumer程序，这个程序部署上去消费积压的数据，消费之后不做耗时的处理，直接均匀轮询写入临时建立好的10倍数量的queue</li>
+<li>接着临时征用10倍的机器来部署consumer，每一批consumer消费一个临时queue的数据</li>
+<li>这种做法相当于是临时将queue资源和consumer资源扩大10倍，以正常的10倍速度来消费数据</li>
+<li>等快速消费完积压数据之后，得恢复原先部署架构，重新用原先的consumer机器来消费消息</li>
+</ol>
+<p>假如是RabbitMQ，RabbitMQ是可以设置过期时间的，就是TTL，如果消息在queue中积压超过一定的时间就会被rabbitmq给清理掉，大量的数据会直接搞丢。</p>
+<p>采用批量重导。就是大量积压的时候，直接丢弃数据，等过了高峰期以后，就开始写程序，将丢失的那批数据，写个临时程序，一点一点的查出来，然后重新灌入mq里面去，把丢的数据补回来。</p>
+<p>假设1万个订单积压在mq里面，没有处理，其中1000个订单都丢了，你只能手动写程序把那1000个订单给查出来，手动发到mq里去再补一次</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%85%AB%E8%82%A1%E6%96%87/" rel="tag">八股文</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" rel="tag">消息队列</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2022/10/17/Mybatis/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Mybatis</div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2022
+        <i class="ri-heart-fill heart_icon"></i> pp-lv
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.png" alt="LPL&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">Home</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">Archives</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">Categories</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">Tags</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">About</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i></p>
+  <div class="reward-box">
+    
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
