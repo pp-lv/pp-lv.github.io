@@ -365,9 +365,9 @@
 <li>3、单例类必须给所有其他对象提供这一实例。</li>
 </ul>
 <h3 id="12-Spring自动装配"><a href="#12-Spring自动装配" class="headerlink" title="12.Spring自动装配"></a>12.Spring自动装配</h3><p>一个Java类中，假如依赖其他的对象（Bean类型的属性），那么就去容器中寻找这个Bean，然后自动注入到当前的实例中。</p>
-<h3 id="22-模板方法"><a href="#22-模板方法" class="headerlink" title="22.模板方法"></a>22.模板方法</h3><p>模板方法模式是一种行为设计模式，它定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。 模板方法使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤的实现方式。</p>
+<h3 id="13-模板方法"><a href="#13-模板方法" class="headerlink" title="13.模板方法"></a>13.模板方法</h3><p>模板方法模式是一种行为设计模式，它定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。 模板方法使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤的实现方式。</p>
 <p>Spring 中 <code>jdbcTemplate</code>、<code>hibernateTemplate</code> 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式。一般情况下，我们都是使用继承的方式来实现模板模式，但是 Spring 并没有使用这种方式，而是使用Callback 模式与模板方法模式配合，既达到了代码复用的效果，同时增加了灵活性。</p>
-<h3 id="23-Spring-事务"><a href="#23-Spring-事务" class="headerlink" title="23.Spring 事务"></a>23.Spring 事务</h3><p>Spring&#x2F;SpringBoot 模块下专门有一篇是讲 Spring 事务的，总结的非常详细，通俗易懂。</p>
+<h3 id="14-Spring-事务"><a href="#14-Spring-事务" class="headerlink" title="14.Spring 事务"></a>14.Spring 事务</h3><p>Spring&#x2F;SpringBoot 模块下专门有一篇是讲 Spring 事务的，总结的非常详细，通俗易懂。</p>
 <h4 id="Spring-管理事务的方式有几种？"><a href="#Spring-管理事务的方式有几种？" class="headerlink" title="Spring 管理事务的方式有几种？"></a>Spring 管理事务的方式有几种？</h4><ul>
 <li><strong>编程式事务</strong> ： 在代码中硬编码(不推荐使用) : 通过 <code>TransactionTemplate</code>或者 <code>TransactionManager</code> 手动管理事务，实际应用中很少使用，但是对于你理解 Spring 事务管理原理有帮助。</li>
 <li><strong>声明式事务</strong> ： 在 XML 配置文件中配置或者直接基于注解（推荐使用） : 实际是通过 AOP 实现（基于<code>@Transactional</code> 的全注解方式使用最多）</li>
@@ -404,7 +404,7 @@
 <h4 id="Transactional-rollbackFor-x3D-Exception-class-注解了解吗？"><a href="#Transactional-rollbackFor-x3D-Exception-class-注解了解吗？" class="headerlink" title="@Transactional(rollbackFor &#x3D; Exception.class)注解了解吗？"></a>@Transactional(rollbackFor &#x3D; Exception.class)注解了解吗？</h4><p><code>Exception</code> 分为运行时异常 <code>RuntimeException</code> 和非运行时异常。事务管理对于企业应用来说是至关重要的，即使出现异常情况，它也可以保证数据的一致性。</p>
 <p>当 <code>@Transactional</code> 注解作用于类上时，该类的所有 public 方法将都具有该类型的事务属性，同时，我们也可以在方法级别使用该标注来覆盖类级别的定义。如果类或者方法加了这个注解，那么这个类里面的方法抛出异常，就会回滚，数据库里面的数据也会回滚。</p>
 <p>在 <code>@Transactional</code> 注解中如果不配置<code>rollbackFor</code>属性,那么事务只会在遇到<code>RuntimeException</code>的时候才会回滚，加上 <code>rollbackFor=Exception.class</code>,可以让事务在遇到非运行时异常时也回滚。</p>
-<h3 id="24-Spring-框架中用到了哪些设计模式"><a href="#24-Spring-框架中用到了哪些设计模式" class="headerlink" title="24.Spring 框架中用到了哪些设计模式"></a>24.Spring 框架中用到了哪些设计模式</h3><ul>
+<h3 id="15-Spring-框架中用到了哪些设计模式"><a href="#15-Spring-框架中用到了哪些设计模式" class="headerlink" title="15.Spring 框架中用到了哪些设计模式"></a>15.Spring 框架中用到了哪些设计模式</h3><ul>
 <li><strong>工厂设计模式</strong> : Spring 使用工厂模式通过 <code>BeanFactory</code>、<code>ApplicationContext</code> 创建 bean 对象。</li>
 <li><strong>代理设计模式</strong> : Spring AOP 功能的实现。</li>
 <li><strong>单例设计模式</strong> : Spring 中的 Bean 默认都是单例的。</li>
@@ -413,7 +413,7 @@
 <li><strong>观察者模式:</strong> Spring 事件驱动模型就是观察者模式很经典的一个应用。</li>
 <li><strong>适配器模式</strong> : Spring AOP 的增强或通知(Advice)使用到了适配器模式、spring MVC 中也是用到了适配器模式适配<code>Controller</code>。</li>
 </ul>
-<h3 id="25-AOP、拦截器、过滤器"><a href="#25-AOP、拦截器、过滤器" class="headerlink" title="25.AOP、拦截器、过滤器"></a>25.AOP、拦截器、过滤器</h3><h4 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h4><p><strong>过滤器</strong>：基于 Servlet，通过函数回调方式实现，可以过滤请求和图片文件等，每个请求一个过滤器只能过滤一次。</p>
+<h3 id="16-AOP、拦截器、过滤器"><a href="#16-AOP、拦截器、过滤器" class="headerlink" title="16.AOP、拦截器、过滤器"></a>16.AOP、拦截器、过滤器</h3><h4 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h4><p><strong>过滤器</strong>：基于 Servlet，通过函数回调方式实现，可以过滤请求和图片文件等，每个请求一个过滤器只能过滤一次。</p>
 <p><strong>拦截器</strong>：基于 java 的反射机制，代理模式实现，只能拦截请求，可以访问上下文等对象，功能强大，一个请求可多次拦截。</p>
 <p>拦截器是 Spring 中AOP的一种实现方法。另一种方法通过 Pointcut、Advice实现</p>
 <h4 id="1）AOP"><a href="#1）AOP" class="headerlink" title="1）AOP"></a>1）AOP</h4><p>AOP是面向切面编程，AOP的基本单元是Aspect(切面)</p>
@@ -505,6 +505,15 @@
 
    
   <nav class="article-nav">
+    
+      <a href="/2022/10/16/SpringBoot/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            (no title)
+          
+        </div>
+      </a>
     
     
       <a href="/2022/10/12/linux/" class="article-nav-link">
