@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  
+
+    <head>
+      <meta charset="utf-8" />
+        
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>Java秒杀方案 |  LPL&#39;s Blog</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    </head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Java秒杀方案"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Java秒杀方案
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/10/17/Java%E7%A7%92%E6%9D%80%E6%96%B9%E6%A1%88/" class="article-date">
+  <time datetime="2022-10-17T11:31:50.000Z" itemprop="datePublished">2022-10-17</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE/">项目</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">6.5k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">24 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="1-问题"><a href="#1-问题" class="headerlink" title="1.问题"></a>1.问题</h2><p><strong>消息丢失问题</strong></p>
+<p>给MQ队列下单时，消息丢失，可以添加“消息发送表”，生产者在发送mq消息前，先写入消息发送表，记为待处理，然后再发送。消费者消费后修改表为已处理。</p>
+<p><strong>写入消息发送表，在发往mq中丢失</strong> </p>
+<p>增加重试机制</p>
+<p><strong>重复消费</strong></p>
+<p>增加“消息处理表”，消费者在处理前先查询消息处理表，假如已存在，表示是重复消费。</p>
+<span id="more"></span>
+
+<p><strong>垃圾消息的问题</strong></p>
+<p>消费失败，不停地重试发消息，但是无法消费。在重试时先查询消息发送表中该消息的发送次数是否达到最大限制。</p>
+<p><strong>延迟消费问题</strong></p>
+<p>rocketmq，自带了<strong>延迟队列</strong>的功能。</p>
+<p>下单时消息生产者会先生成订单，此时状态为待支付，然后会向延迟队列中发一条消息。达到了延迟时间，消息消费者读取消息之后，会查询该订单的状态是否为待支付。如果是待支付状态，则会更新订单状态为取消状态。如果不是待支付状态，说明该订单已经支付过了，则直接返回。 </p>
+<p><strong>可以优化的问题</strong></p>
+<ul>
+<li>消息丢失问题</li>
+<li>数据的动静分离没有做的很彻底，只是用到了浏览器缓存，没有使用CDN等技术</li>
+<li>没有设置降级的方案</li>
+<li>限流做的不够完善，目前只对用户对于某个商品的访问做了限流，没有对整体的流量做限流，比如不法分子有非常多的账号，同时对一个商品发起请求可能造成我们的服务不可用。</li>
+<li>没有考虑redis穿透的情况处理方案</li>
+</ul>
+<h2 id="2-技术点介绍"><a href="#2-技术点介绍" class="headerlink" title="2.技术点介绍"></a>2.技术点介绍</h2><img src="/2022/10/17/Java%E7%A7%92%E6%9D%80%E6%96%B9%E6%A1%88/image-20220320141655536.png" class="">
+
+<p>RabbitMQ：用来实现异步，解耦系统模块</p>
+<p>Redis：缓存、数据库、注册中心、消息中间件，本处当做缓存使用</p>
+<h2 id="3-秒杀流程"><a href="#3-秒杀流程" class="headerlink" title="3.秒杀流程"></a>3.秒杀流程</h2><p>1.登录进入商品列表页面，静态资源缓存</p>
+<p>2.点击进入商品详情页面，静态资源缓存，Ajax获取验证码等动态信息</p>
+<p>3.点击秒杀, 将验证码结果和商品ID传给后端，如果结果正确。动态生成随机串UUID,结合用户ID和商品ID存入redis，并将path传给前端。前端获取path后，再根据path地址调用秒杀服务</p>
+<p>4.服务端获取请求的path参数，去查缓存是否在</p>
+<p>5.如果存在，执行秒杀逻辑</p>
+<p>6.查看Redis还有库存，预减redis库存，看是否已经生成订单，没有的话就将请求放入消息队列</p>
+<p>7.后台从消息队列中取消息：获取商品ID和用户ID，判断数据库库存</p>
+<p>8.如果有库存，减库存，生成订单。（可以通过延迟队列，处理付款）</p>
+<p>9.前端轮询订单生成结果。</p>
+<h2 id="4-分布式session（通过redis解决）"><a href="#4-分布式session（通过redis解决）" class="headerlink" title="4.分布式session（通过redis解决）"></a>4.分布式session（通过redis解决）</h2><p>之前的代码在我们之后一台应用系统，所有操作都在一台Tomcat上，没有什么问题。当我们部署多台系统，配合Nginx的时候会出现用户登录的问题 </p>
+<p><strong>原因</strong> </p>
+<p>由于 Nginx 使用默认负载均衡策略（轮询），请求将会按照时间顺序逐一分发到后端应用上。 也就是说刚开始我们在 Tomcat1 登录之后，用户信息放在 Tomcat1 的 Session 里。过了一会，请求又被 Nginx 分发到了 Tomcat2 上，这时Tomcat2 上Session 里还没有用户信息，于是又要登录。</p>
+<p><strong>分布式Session是怎么实现的</strong></p>
+<ul>
+<li>用户登录后生成随机字符串，并向cookie中写入此字符串。</li>
+<li>在Redis中记录此字符串和用户信息的映射</li>
+<li>当用户再次访问网页时，取出cookie中对应字段值，根据此字段值访问Redis得到用户相关信息</li>
+</ul>
+<p>也可以通过SpringSession实现分布式Session： </p>
+<p>​	使用SpringSession实现分布式Session，通过Session将用户信息存储在Redis中，</p>
+<p> <strong>其他解决方案：</strong> </p>
+<ul>
+<li><p>Session复制 （两个tomcat同步代码）</p>
+<p>优点</p>
+<p>无需修改代码，只需要修改Tomcat配置</p>
+<p>缺点</p>
+<p> Session同步传输占用内网带宽</p>
+<p>多台Tomcat同步性能指数级下降</p>
+<p> Session占用内存，无法有效水平扩展</p>
+</li>
+<li><p>前端存储（cookie 明文）</p>
+<p>优点</p>
+<p>不占用服务端内存 </p>
+<p>缺点</p>
+<p> 存在安全风险</p>
+<p> 数据大小受cookie限制</p>
+<p> 占用外网带宽 </p>
+</li>
+<li><p>Session粘滞 </p>
+<p>优点</p>
+<p> 无需修改代码</p>
+<p> 服务端可以水平扩展 </p>
+<p>缺点</p>
+<p> 增加新机器，会重新Hash，导致重新登录</p>
+<p> 应用重启，需要重新登录 </p>
+</li>
+<li><p>后端集中存储</p>
+<p>优点 </p>
+<p>安全 </p>
+<p>容易水平扩展 </p>
+<p>缺点 </p>
+<p>增加复杂度 </p>
+<p>需要修改代码</p>
+</li>
+</ul>
+<h2 id="5-数据库设计"><a href="#5-数据库设计" class="headerlink" title="5.数据库设计"></a>5.数据库设计</h2><ol>
+<li><p>商品列表</p>
+<img src="/2022/10/17/Java%E7%A7%92%E6%9D%80%E6%96%B9%E6%A1%88/image-20220321153710269.png" class="">
+</li>
+<li><p>商品详情</p>
+</li>
+<li><p>秒杀订单</p>
+</li>
+<li><img src="/2022/10/17/Java%E7%A7%92%E6%9D%80%E6%96%B9%E6%A1%88/image-20220321154257019.png" class="">
+</li>
+<li><p>秒杀商品表</p>
+<p>方便后期的处理，假如简单在商品表中加字段，后期处理很麻烦，难以维护，且可能原价商品和秒杀商品同时放出</p>
+<img src="/2022/10/17/Java%E7%A7%92%E6%9D%80%E6%96%B9%E6%A1%88/image-20220321154058830.png" class="">
+</li>
+<li><p>订单详情</p>
+</li>
+<li><img src="/2022/10/17/Java%E7%A7%92%E6%9D%80%E6%96%B9%E6%A1%88/image-20220321153941102.png" class=""></li>
+</ol>
+<h2 id="6-明文密码二次MD5加密"><a href="#6-明文密码二次MD5加密" class="headerlink" title="6.明文密码二次MD5加密"></a>6.明文密码二次MD5加密</h2><p><strong>加密的目的：第一次是因为http是明文传输的，第二次为了防止数据库被盗</strong></p>
+<p>1.第一次加密是因为http采用明文传输，若传输的数据包被截取，那么密码就会被别人知道。是用户端对密码进行加密，防止传输过程中的密码泄露。<br>2.第二次加密是防止数据库被盗，因为MD5有些加密后是可以通过彩虹表进行反向查询得到原始密码，所以第二次MD5是为了保险起见，服务器对一次MD5加密后的输出进行再次加密，然后存入数据库</p>
+<h2 id="7-系统压测"><a href="#7-系统压测" class="headerlink" title="7.系统压测"></a>7.系统压测</h2><ol>
+<li>JMeter</li>
+<li>自定义变量模拟多用户</li>
+<li>JMeter命令行的使用</li>
+<li>正式压测<ol>
+<li>商品列表</li>
+<li>秒杀</li>
+</ol>
+</li>
+</ol>
+<ul>
+<li>JMeter在windows下是图形界面<ul>
+<li>打开jmeter.bat运行图形界面</li>
+<li>测试计划中添加线程组</li>
+<li>在线程组中添加HTTP请求默认值（就是端口号）</li>
+<li>在线程组中添加HTTP请求（就是要测试的类的URL）、这里可以设置带参数</li>
+<li>在线程组中添加监听器进监听</li>
+<li>也可以通过自定义模拟多用户（写一个文件，导入即可）</li>
+</ul>
+</li>
+<li>JMeter在Linux下是命令行进行操<ul>
+<li>在Windows上录好jmx</li>
+<li>命令行：sh jmeter.sh -n -t XXX.jmx -l result.jtl</li>
+<li>把result.jtl导入到jmeter</li>
+</ul>
+</li>
+</ul>
+<p><strong>结果</strong>：五千并发的情况下，QPS为一千三左右</p>
+<h2 id="8-页面优化"><a href="#8-页面优化" class="headerlink" title="8.页面优化"></a>8.页面优化</h2><h3 id="8-1-页面静态化和缓存"><a href="#8-1-页面静态化和缓存" class="headerlink" title="8.1 页面静态化和缓存"></a><strong>8.1 页面静态化和缓存</strong></h3><p>网页静态化技术和缓存技术的本意都是为了减轻数据库的访问压力，实现网站优化，提高网站的访问效率。</p>
+<p><strong>定义不同:</strong><br>静态化是将数据库静态化到页面，客户端访问不需要查询数据库，主要存放形式是静态化文件资源，存储于硬盘，用户请求的是指定目录下的静态页面，页面中有数据。<br>缓存是将数据存储于服务器内存，二者存放位置和形式不一样。</p>
+<p><strong>作用不同：</strong><br>网页静态化还有利于搜索引擎，明显地提高网站的访问效率，安全的角度来说，静态页面更不容易被SQL注入攻击。因此，为了提高访问效率，同时利于SEO，增强安全性<br>缓存是指在服务器缓存的，用户访问时能加快访问速度的。</p>
+<p><strong>利用原理不同：</strong><br>页面静态化利用的静态页面交互比动态交互快原理；<br>缓存技术利用内存交互比数据库交互快的原理.</p>
+<p><strong>适用场景不同：</strong><br>网页静态化比较适合大规模且相对变化不太频繁的数据。秒杀的时候，都要把商品页面进行静态化，放到CDN上面，这样能在前端就能抗住大量的并发请求；内容页面一般不怎么变化，完全可以静态化。<br>缓存比较适合小规模的数据。首页、分类页的数据，容易变化，我们就可以使用缓存来实现，设置过期时间，同样不用对数据库进行查询，只要访问内存就行。</p>
+<h3 id="8-2-页面缓存-URL缓存-对象缓存"><a href="#8-2-页面缓存-URL缓存-对象缓存" class="headerlink" title="8.2 页面缓存+URL缓存+对象缓存"></a>8.2 页面缓存+URL缓存+对象缓存</h3><p>页面缓存通过将页面放入Redis缓存中，减少页面渲染速度，URL缓存是将一些URL字段动态变化的页面放入Redis，对象缓存是在整个过程中，可能需要判断User字段，但是此处将对象放入缓存中。</p>
+<p><strong>页面缓存步骤（这里指的是商品列表）：</strong><br>1.从redisService中取缓存<br>2.若缓存中没有则手动渲染，利用thymeleaf模板<br>3.然后将页面加入缓存，并返回渲染页面  </p>
+<p>1.假如有一个这样的代码(他的功能是展现商品的列表,这里讲的框架是SpringBoot,前端用的thymleaf模板)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/goods/to_list&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">list</span><span class="params">(Model model, MiaoshaUser user )</span> &#123;</span><br><span class="line">	model.addAttribute(<span class="string">&quot;user&quot;</span>, user);</span><br><span class="line">	<span class="comment">// 查询商品列表</span></span><br><span class="line">	List&lt;GoodsVo&gt; goodsList = goodsService.listGoodsVo();</span><br><span class="line">	model.addAttribute(<span class="string">&quot;goodsList&quot;</span>, goodsList);</span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;goods_list&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们从上面的代码得知：该代码是查询出商品列表然后转到goods_list.html的前端页面上(配置文件省略)，我们可以得知。将goodsList参数通过model传给goods_list页面，这其中是通过SpringBoot框架来进行渲染的。其中牵扯很多代码的运行，比较耗时间；而且每执行这个代码一次,SpringBoot就要渲染一次，非常的麻烦。</p>
+<p>2.接下来我们就按照上面的例子作为例子来讲解页面的缓存(使用页面缓存的代码如下:)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(value = &quot;/goods/to_list&quot;, produces = &quot;text/html&quot;)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">list</span><span class="params">(Model model, MiaoshaUser user, HttpServletRequest request, HttpServletResponse response)</span> &#123;</span><br><span class="line">	model.addAttribute(<span class="string">&quot;user&quot;</span>, user);</span><br><span class="line">	<span class="comment">// 查询商品列表</span></span><br><span class="line">	List&lt;GoodsVo&gt; goodsList = goodsService.listGoodsVo();</span><br><span class="line">	model.addAttribute(<span class="string">&quot;goodsList&quot;</span>, goodsList);</span><br><span class="line">	<span class="comment">// 使用页面缓存 1.查询redis对应的缓存 2.不存在则写入redis缓存中</span></span><br><span class="line">	<span class="comment">// 1.查询redis</span></span><br><span class="line">	<span class="type">String</span> <span class="variable">html</span> <span class="operator">=</span> redisService.get(GoodsKey.getGoodsList, <span class="string">&quot;&quot;</span>, String.class);</span><br><span class="line">	<span class="keyword">if</span> (!StringUtils.isEmpty(html)) &#123;</span><br><span class="line">		<span class="keyword">return</span> html;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 假如redis查询不到数据,则:渲染html(通过SpringBoot的themleafViewResovler接口的实现类SpringWebContext来操作)</span></span><br><span class="line">	<span class="type">SpringWebContext</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SpringWebContext</span>(request, response, request.getServletContext(), request.getLocale(),</span><br><span class="line">			model.asMap(), applicationContext);</span><br><span class="line">	<span class="comment">// 手动进行渲染:thymeleafViewResolver</span></span><br><span class="line">	html = thymeleafViewResolver.getTemplateEngine().process(<span class="string">&quot;goods_list&quot;</span>, ctx);</span><br><span class="line">	<span class="comment">// 2.将手动渲染完毕的html存放到redis中</span></span><br><span class="line">	<span class="keyword">if</span> (!StringUtils.isEmpty(html)) &#123;</span><br><span class="line">		redisService.set(GoodsKey.getGoodsList, <span class="string">&quot;&quot;</span>, html);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> html;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们从上面的代码得知：页面缓存是首先从redis中取出渲染好的页面,如果不存在，那么则自己手动渲染页面一次，再把通过thymeleafViewResolver渲染好的页面存入到缓存中去!</p>
+<p><strong>URL缓存（指的是商品详情页）未实现</strong><br>与页面缓存步骤基本一致，但是需要取缓存和加缓存时要加入参数，GoodsId<br><strong>对象缓存（指的是User对象）未实现</strong><br>前面的页面缓存和URL缓存适合变化不大的，缓存时间比较短<br>对象缓存是<strong>长期缓存</strong>，所以需要有个<strong>更新</strong>的步骤<br>第一步是取缓存<br>若缓存中没有则去数据库中查找，并加入缓存；如数据库中没有就报错<br>更新用户的密码</p>
+<h3 id="8-3-页面静态化，前后端分离（Thymeleaf实现）"><a href="#8-3-页面静态化，前后端分离（Thymeleaf实现）" class="headerlink" title="8.3 页面静态化，前后端分离（Thymeleaf实现）"></a>8.3 页面静态化，前后端分离（Thymeleaf实现）</h3><p>Thymeleaf 是新一代 Java 模板引擎，与 Velocity、FreeMarker 等传统 Java 模板引擎不同，Thymeleaf 支持 HTML 原型，其文件后缀为“.html”，因此它可以直接被浏览器打开，此时浏览器会忽略未定义的 Thymeleaf 标签属性，展示 thymeleaf 模板的静态页面效果；当通过 Web 应用程序访问时，Thymeleaf 会动态地替换掉静态内容，使页面动态显示。</p>
+<p>Thymeleaf 通过在 html 标签中，增加额外属性来达到“模板+数据”的展示方式，示例代码如下。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span> <span class="attr">xmlns:th</span>=<span class="string">&quot;http://www.thymeleaf.org&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>Title<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--th:text 为 Thymeleaf 属性，用于在展示文本--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h1</span> <span class="attr">th:text</span>=<span class="string">&quot;迎您来到Thymeleaf&quot;</span>&gt;</span>欢迎您访问静态页面 HTML<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当直接使用浏览器打开时，浏览器展示结果如下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">欢迎您访问静态页面HTML</span><br></pre></td></tr></table></figure>
+
+<p>当通过 Web 应用程序访问时，浏览器展示结果如下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">迎您来到Thymeleaf</span><br></pre></td></tr></table></figure>
+
+<h4 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h4><p>活动页面绝大多数内容是固定的，比如：商品名称、商品描述、图片等。为了减少不必要的服务端请求，通常情况下，会对固定页面做静态化处理。用户浏览商品等常规操作，并不会请求到服务端。</p>
+<ul>
+<li>将动态渲染生成的页面结果保存成html文件，放到静态文件服务器中。</li>
+<li>用户直接去静态服务器，访问处理好的静态html文件。</li>
+</ul>
+<p>Thymeleaf除了可以把渲染结果写入Response，也可以写到本地文件实现静态化，先来看看Thymeleaf中的几个概念：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Context：运行上下文</span><br><span class="line">TemplateResolver：模板解析器</span><br><span class="line">TemplateEngine：模板引擎</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Context</p>
+</blockquote>
+<p>上下文：用来保存模型数据，当模板引擎渲染时，可以从Context上下文获取数据用于渲染，当与SpringBoot结合使用时，我们放入Model的数据会被处理到Context，作为模板渲染的数据使用。</p>
+<blockquote>
+<p>TemplateResolver</p>
+</blockquote>
+<p>模板解析器：用来读取模板相关的配置，如：模板存放的位置信息、模板文件名称、模板文件的类型等。与SpringBoot结合使用时，TemplateResolver已由其创建完成，并且各种配置也都有默认值，比如模板存放位置，默认就是：templates，模板文件类型默认就是html</p>
+<blockquote>
+<p>TemplateEngine</p>
+</blockquote>
+<p>模板引擎：用来解析模板的引擎，需要使用到上下文、模板解析器。分别从两者中获取模板中需要的数据，模板文件。然后利用内置的语法规则解析，从而输出解析后的文件。来看下模板引起进行处理的函数</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">templateEngine.process(&quot;模板名&quot;, context, writer);</span><br></pre></td></tr></table></figure>
+
+<p>三个参数：</p>
+<ul>
+<li>模板名称</li>
+<li>上下文：包含了模型数据</li>
+<li>writer：输出目的地的流。在输出时，我们可以指定输出的目的地，如果目的地是Response的流，那就是网络响应。如果目的地是本地文件，那就实现静态化了。</li>
+</ul>
+<p>使用Thymeleaf生成静态页面<br>生成静态页面 &#x3D; 静态模板(item.html) + 动态数据</p>
+<p>1）创建Context上下文对象（读取模板文件需要的动态数据）<br>2）定义静态模板（(item.html）<br>3）使用模板引擎对象读取静态目标，把动态数据写入模板，使用IO输出流生成一个静态文件</p>
+<p>静态页面服务器一般选择使用nginx。</p>
+<p>在配置文件中配置静态化页面的信息<br>1.在application.yml中配置生成静态文件的目录：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ly:</span></span><br><span class="line">  <span class="attr">static:</span></span><br><span class="line">    <span class="attr">itemDir:</span> <span class="string">D:\resource\ly-source\nginx-1.16.0\html\item</span> <span class="comment">#静态页服务器地址</span></span><br><span class="line">    <span class="attr">itemTemplate:</span> <span class="string">item</span> <span class="comment">#模板名称</span></span><br></pre></td></tr></table></figure>
+
+<p>2.编写生成静态化页面的service方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成商品的静态页面</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">createStaticPage</span><span class="params">(Long spuId)</span>&#123;</span><br><span class="line">        <span class="comment">//1）创建Context上下文对象（读取模板文件需要的动态数据）</span></span><br><span class="line">        <span class="type">Context</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Context</span>();</span><br><span class="line">        <span class="comment">//设置动态数据</span></span><br><span class="line">        context.setVariables(getDetailData(spuId));    </span><br><span class="line">		<span class="comment">//2）定义静态模板（(item.html）</span></span><br><span class="line">    	<span class="type">String</span> <span class="variable">tmepName</span> <span class="operator">=</span> itemTemplate+<span class="string">&quot;.html&quot;</span>;</span><br><span class="line"></span><br><span class="line">    	<span class="comment">//3）使用模板引擎对象读取静态目标，把动态数据写入模板，使用IO输出流生成一个静态文件</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//生成 静态页名称</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> spuId+<span class="string">&quot;.html&quot;</span>;</span><br><span class="line">    <span class="type">PrintWriter</span> <span class="variable">writer</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        writer = <span class="keyword">new</span> <span class="title class_">PrintWriter</span>(<span class="keyword">new</span> <span class="title class_">File</span>(itemDir,fileName));</span><br><span class="line">        templateEngine.process(tmepName,context,writer);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">//注意：一旦涉及自定义输出流，必须关闭输出流，否则后续无法删除该文件</span></span><br><span class="line">        writer.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-4-CDN优化-未实现"><a href="#8-4-CDN优化-未实现" class="headerlink" title="8.4 CDN优化 未实现"></a>8.4 CDN优化 未实现</h3><p>CDN是内容分发网络，相当于缓存，只是部署在全国各地，当用户发起请求时，会找最近的CDN获取资源</p>
+<h2 id="9-接口优化"><a href="#9-接口优化" class="headerlink" title="9.接口优化"></a>9.接口优化</h2><p>思路</p>
+<ul>
+<li>内存标记减少Redis访问</li>
+<li>Redis预减库存减少数据库访问</li>
+<li>RabbitMQ队列缓冲，异步下单，增强用户体验</li>
+</ul>
+<h3 id="9-1-秒杀库存的处理"><a href="#9-1-秒杀库存的处理" class="headerlink" title="9.1 秒杀库存的处理"></a>9.1 秒杀库存的处理</h3><h4 id="1-加载库存"><a href="#1-加载库存" class="headerlink" title="1.加载库存"></a>1.加载库存</h4><p>系统初始化后就将所有商品库存放入缓存</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 秒杀接口优化之---   第一步:  系统初始化后就将所有商品库存放入 缓存</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    List&lt;GoodsVo&gt; goods = goodsService.getGoodsList();</span><br><span class="line">    <span class="keyword">if</span> (goods == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (GoodsVo goodsVo : goods) &#123;</span><br><span class="line">        redisService.set(GoodsKey.getId(), goodsVo.getStockCount());</span><br><span class="line">        isOverMap.put(goodsVo.getId(), <span class="literal">false</span>);<span class="comment">//先初始化 每个商品都是false 就是还有</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-Redis预减库存减少数据库的访问"><a href="#2-Redis预减库存减少数据库的访问" class="headerlink" title="2.Redis预减库存减少数据库的访问"></a>2.Redis预减库存减少数据库的访问</h4><p>为了减少对数据库得访问，尽量访问Redis，就在系统初始化时预先把库存加载到Redis。假如库存不够，直接返回，库存够的话，把请求放入RabbitMQ队列，向客户端返回正在排队中，然后异步访问数据库。客户端轮询查看订单状态。（后续为了更多的提升，可以分库分表）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**秒杀接口优化之 ----第二步： 预减库存 从缓存中减库存</span></span><br><span class="line"><span class="comment"> * 利用 redis 中的方法，减去库存，返回值为 减去1 之后的值</span></span><br><span class="line"><span class="comment"> * */</span></span><br><span class="line"><span class="type">long</span> <span class="variable">stock</span> <span class="operator">=</span> redisService.decr(GoodsKey.getGoodsStock, <span class="string">&quot;&quot;</span> + goodsId);</span><br><span class="line"><span class="comment">/*这里判断不能小于等于，因为减去之后等于 说明还有是正常范围*/</span></span><br><span class="line"><span class="keyword">if</span> (stock &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    isOverMap.put(goodsId, <span class="literal">true</span>);<span class="comment">//没有库存就设置 对应id 商品的map 为true</span></span><br><span class="line">    <span class="keyword">return</span> Result.error(CodeMsg.MIAO_SHA_NO_STOCK);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>整体的逻辑如下：</p>
+<p>1.先将所有数据读出来，初始化到缓存中，并以 stock + goodid 的形成存入Redis。<br>2.在秒杀的时候，先进行预减库存检测，从redis中，利用decr 减去对应商品的库存，如果库存小于0，说明此时 库存不足，则不需要访问数据库。直接抛出异常即可。<br>我们上面还使用到了isOverMap，这个是内存标记。</p>
+<h4 id="3-内存标记减少Redis的访问"><a href="#3-内存标记减少Redis的访问" class="headerlink" title="3.内存标记减少Redis的访问"></a>3.内存标记减少Redis的访问</h4><p>定义一个hashmap标记是否还有库存，假如没有库存，就不再需要访问Redis，减少Redis访问次数</p>
+<p>由于接口优化很多基于Redis的缓存操作，当并发很高的时候，也会给Redis服务器带来很大的负担，如果可以减少对Redis服务器的访问，也可以达到的优化的效果。</p>
+<p>于是，可以加一个内存map,标记对应商品的库存量是否还有，在访问Redis之前，在map中拿到对应商品的库存量标记，就可以不需要访问Redis 就可以判断没有库存了。</p>
+<p>1.生成一个map，并在初始化的时候，将所有商品的id为键，标记false 存入map中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Map&lt;Long, Boolean&gt; isOverMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;Long, Boolean&gt;();</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 秒杀接口优化之---   第一步:  系统初始化后就将所有商品库存放入 缓存</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    List&lt;GoodsVo&gt; goods = goodsService.getGoodsList();</span><br><span class="line">    <span class="keyword">if</span> (goods == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (GoodsVo goodsVo : goods) &#123;</span><br><span class="line">        redisService.set(GoodsKey.getGoodsStock, <span class="string">&quot;&quot;</span> + goodsVo.getId(), goodsVo.getStockCount());</span><br><span class="line">        isOverMap.put(goodsVo.getId(), <span class="literal">false</span>);<span class="comment">//先初始化 每个商品都是false 就是还有</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**再优化： 优化库存之后的请求不访问redis 通过判断 对应 map 的值</span></span><br><span class="line"><span class="comment">  * */</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">isOver</span> <span class="operator">=</span> isOverMap.get(goodsId);</span><br><span class="line"><span class="keyword">if</span> (isOver) &#123;</span><br><span class="line">     <span class="keyword">return</span> Result.error(CodeMsg.MIAO_SHA_NO_STOCK);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (stock &lt; <span class="number">0</span>) &#123;</span><br><span class="line">     isOverMap.put(goodsId, <span class="literal">true</span>);<span class="comment">//没有库存就设置 对应id 商品的map 为true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>2.在预减库存之前，从map中取标记，若标记为false,说明有库存</p>
+<p>3.预减库存，当遇到库存不足的时候，将该商品的标记置为true,表示该商品的库存不足。这样，下面的所有请求，将被拦截，无需访问redis进行预减库存。</p>
+<h4 id="4-RabbitMQ异步下单"><a href="#4-RabbitMQ异步下单" class="headerlink" title="4.RabbitMQ异步下单"></a>4.RabbitMQ异步下单</h4><ol>
+<li><p>SpringBoot整合RabbitMQ</p>
+</li>
+<li><p>使用的topic工作模式，便于扩展</p>
+<p>Rabbit中发布消息不直接和消息队列联系，而是通过交换机和队列联系</p>
+</li>
+</ol>
+<p>整体逻辑如下</p>
+<p>将商品的库存数据加载至内存，同时初始化内存标记，即把每个产品的id存放至map，都是初始化为false，在每次需要执行秒杀逻辑之前，先在内存标记中取值，如果仍有库存，即map里返回的为false,则执行秒杀逻辑，否则直接抛出异常。</p>
+<p>然后进行减库存，先访问Redis，将请求放入队列，最后访问数据库。</p>
+<p>在扣减库存时，需要判断缓存中的库存数量是否仍然大于0，如果小于等于0，修改内存标记。</p>
+<h3 id="9-2-Redis实现分布式锁（之前是基于redis自带的递减函数进行原子性操作）保证数据库的一致性。"><a href="#9-2-Redis实现分布式锁（之前是基于redis自带的递减函数进行原子性操作）保证数据库的一致性。" class="headerlink" title="9.2 Redis实现分布式锁（之前是基于redis自带的递减函数进行原子性操作）保证数据库的一致性。"></a>9.2 Redis实现分布式锁（之前是基于redis自带的递减函数进行原子性操作）保证数据库的一致性。</h3><p>给Redis数据库的减库存操作进行加锁。为了防止多实例修改数据库，造成数据不一致问题。</p>
+<p>在减库存时，通过<strong>Redis的占位锁</strong> ，一般是 <strong>setnx 和 del</strong>函数，实现互斥访问，通过占位锁实现分布式锁，假如线程执行过程中出现问题，则占位锁没删除，会造成其他线程无法进行，因此<strong>设置超时时间</strong>。但是假如出现延迟，还未执行完锁就被超时删除，引入看门狗机制，保证线程在执行过程中，锁不会过期（设置一个监听线程，锁的过期时间每减少三门之一，假如还未执行完，就把过期时间加满）。同时，为了防止锁删除操作可能删除的是其他线程的锁，会造成混乱；因此通过在设置锁时，<strong>给value设置一个随机值</strong>，每当执行完任务进行锁的删除时，<strong>先检查是否是自己的锁</strong>，不是就无法删除。</p>
+<p><strong>删除锁需要几个步骤</strong>：</p>
+<p>1.获取锁 </p>
+<p>2.判断是否是自己的</p>
+<p>3.删除：操作不是原子性的，因此通过lua脚本实现原子性，redis内置支持lua脚本（两种实现方式：1.在redis端写好，在java端调用 2.在Java端写好，发送到redis执行）</p>
+<h2 id="10-安全优化"><a href="#10-安全优化" class="headerlink" title="10.安全优化"></a>10.安全优化</h2><h3 id="10-1-秒杀接口地址隐藏"><a href="#10-1-秒杀接口地址隐藏" class="headerlink" title="10.1 秒杀接口地址隐藏"></a>10.1 秒杀接口地址隐藏</h3><p>秒杀接口地址隐藏</p>
+<p>虽然前端页面在秒杀未开始时秒杀按钮设置为不可用，但是有可能用户通过前端js代码找到秒杀地址，在秒杀未开始时直接访问，秒杀接口隐藏的目的是用户通过js获取到的秒杀地址并不能让其完成秒杀功能。</p>
+<p><strong>逻辑：</strong></p>
+<p>1.点击秒杀按钮，第一次发起请求</p>
+<ol>
+<li>判断用户是否登陆</li>
+<li>判断验证码是否正确</li>
+<li>根据用户id和商品id生成一个随机地址path，放入Redis，并作为响应返回给前端</li>
+</ol>
+<p>2.前端收到path后，放入URL中，再次发起请求</p>
+<ol>
+<li>判断path和Redis中的path是否一致</li>
+<li>内存标记</li>
+<li>预减库存</li>
+<li>生成订单</li>
+</ol>
+<p><strong>代码实现：</strong></p>
+<p>秒杀按钮</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-primary&quot;</span> <span class="attr">type</span>=<span class="string">&quot;button&quot;</span> <span class="attr">id</span>=<span class="string">&quot;buyButton&quot;</span><span class="attr">onclick</span>=<span class="string">&quot;getMiaoshaPath()&quot;</span>&gt;</span>立即秒杀<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>获取秒杀地址</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">getMiaoshaPath</span>(<span class="params"></span>)&#123;</span><br><span class="line">	<span class="keyword">var</span> goodsId = $(<span class="string">&quot;#goodsId&quot;</span>).<span class="title function_">val</span>();</span><br><span class="line">	<span class="title function_">g_showLoading</span>();</span><br><span class="line">	$.<span class="title function_">ajax</span>(&#123;</span><br><span class="line">		<span class="attr">url</span>:<span class="string">&quot;/miaosha/path&quot;</span>,<span class="comment">//后台获取秒杀地址</span></span><br><span class="line">		<span class="attr">type</span>:<span class="string">&quot;GET&quot;</span>,</span><br><span class="line">		<span class="attr">data</span>:&#123;</span><br><span class="line">			<span class="attr">goodsId</span>:goodsId,</span><br><span class="line">			<span class="attr">verifyCode</span>:$(<span class="string">&quot;#verifyCode&quot;</span>).<span class="title function_">val</span>()</span><br><span class="line">		&#125;,</span><br><span class="line">		<span class="attr">success</span>:<span class="keyword">function</span>(<span class="params">data</span>)&#123;</span><br><span class="line">			<span class="keyword">if</span>(data.<span class="property">code</span> == <span class="number">0</span>)&#123;</span><br><span class="line">			    <span class="comment">//获取到秒杀地址</span></span><br><span class="line">				<span class="keyword">var</span> path = data.<span class="property">data</span>;</span><br><span class="line">				<span class="comment">//请求秒杀方法</span></span><br><span class="line">				<span class="title function_">doMiaosha</span>(path);</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">				layer.<span class="title function_">msg</span>(data.<span class="property">msg</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;,</span><br><span class="line">		<span class="attr">error</span>:<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">			layer.<span class="title function_">msg</span>(<span class="string">&quot;客户端请求有误&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>请求执行秒杀逻辑</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">doMiaosha</span>(<span class="params">path</span>)&#123;<span class="comment">//秒杀的时候，需要向服务端传递参数</span></span><br><span class="line">	$.<span class="title function_">ajax</span>(&#123;</span><br><span class="line">		<span class="attr">url</span>:<span class="string">&quot;/miaosha/&quot;</span>+path+<span class="string">&quot;/do_miaosha&quot;</span>,<span class="comment">//进行秒杀,加上后台返回的path</span></span><br><span class="line">		<span class="attr">type</span>:<span class="string">&quot;POST&quot;</span>,</span><br><span class="line">		<span class="attr">data</span>:&#123;</span><br><span class="line">			<span class="attr">goodsId</span>:$(<span class="string">&quot;#goodsId&quot;</span>).<span class="title function_">val</span>()</span><br><span class="line">		&#125;,</span><br><span class="line">		<span class="attr">success</span>:<span class="keyword">function</span>(<span class="params">data</span>)&#123;</span><br><span class="line">			<span class="keyword">if</span>(data.<span class="property">code</span> == <span class="number">0</span>)&#123;</span><br><span class="line">				<span class="comment">//判断秒杀结果</span></span><br><span class="line">				<span class="title function_">getMiaoshaResult</span>($(<span class="string">&quot;#goodsId&quot;</span>).<span class="title function_">val</span>());</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">				layer.<span class="title function_">msg</span>(data.<span class="property">msg</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;,</span><br><span class="line">		<span class="attr">error</span>:<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">			layer.<span class="title function_">msg</span>(<span class="string">&quot;客户端请求有误&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>第一次请求获取秒杀地址</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(value=&quot;/path&quot;, method=RequestMethod.GET)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="keyword">public</span> Result&lt;String&gt; <span class="title function_">getMiaoshaPath</span><span class="params">(HttpServletRequest request, HttpServletResponse response, MiaoshaUser user,</span></span><br><span class="line"><span class="params">									 <span class="meta">@RequestParam(&quot;goodsId&quot;)</span><span class="type">long</span> goodsId,</span></span><br><span class="line"><span class="params">									 <span class="meta">@RequestParam(value=&quot;verifyCode&quot;, defaultValue=&quot;0&quot;)</span><span class="type">int</span> verifyCode</span></span><br><span class="line"><span class="params">)</span> &#123;</span><br><span class="line">	<span class="comment">//判断用户是否登录</span></span><br><span class="line">	<span class="keyword">if</span>(user == <span class="literal">null</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> Result.error(CodeMsg.SESSION_ERROR);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//判断验证码是否正确</span></span><br><span class="line">	<span class="type">boolean</span> <span class="variable">check</span> <span class="operator">=</span> miaoshaService.checkVerifyCode(user, goodsId, verifyCode);</span><br><span class="line">	<span class="keyword">if</span>(!check) &#123;</span><br><span class="line">		<span class="keyword">return</span> Result.error(CodeMsg.REQUEST_ILLEGAL);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//生成秒杀地址</span></span><br><span class="line">	<span class="type">String</span> <span class="variable">path</span>  <span class="operator">=</span>miaoshaService.createMiaoshaPath(user, goodsId);</span><br><span class="line">	<span class="keyword">return</span> Result.success(path);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>生成秒杀地址<br>MiaoshaService 生成随机数再用MD5加密来作为 该用户秒杀该商品的path，并将存入缓存，客户端获得path后会立马进行秒杀，所以path的有效期设置很短（有效期1分钟）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 创建一个临时的秒杀地址</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> user</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> goodsId</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> </span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">createMiaoshaPath</span><span class="params">(MiaoshaUser user,<span class="type">long</span> goodsId)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(user == <span class="literal">null</span> ||goodsId &lt;=<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> MD5Util.md5(UUIDUtil.uuid()+<span class="string">&quot;123456&quot;</span>);</span><br><span class="line">        redisService.set(MiaoshaKey.getMiaoshaPath,<span class="string">&quot;&quot;</span>+user.getId()+<span class="string">&quot;_&quot;</span>+goodsId,str);</span><br><span class="line">        <span class="keyword">return</span> str;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>服务端收到秒杀请求时，根据用户id和商品id，检查对应的path是否正确后，再进行后面的秒杀逻辑。<br>验证秒杀地址是否正确</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 验证秒杀地址</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> user</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> goodsId</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> path</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">checkPath</span><span class="params">(MiaoshaUser user, <span class="type">long</span> goodsId, String path)</span> &#123;</span><br><span class="line">	<span class="keyword">if</span>(user == <span class="literal">null</span> || path == <span class="literal">null</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="type">String</span> <span class="variable">pathOld</span> <span class="operator">=</span> redisService.get(MiaoshaKey.getMiaoshaPath, <span class="string">&quot;&quot;</span>+user.getId() + <span class="string">&quot;_&quot;</span>+ goodsId, String.class);</span><br><span class="line">	<span class="keyword">return</span> path.equals(pathOld);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-2-算术验证码"><a href="#10-2-算术验证码" class="headerlink" title="10.2 算术验证码"></a>10.2 算术验证码</h3><ul>
+<li>作用：接口防刷；错开请求</li>
+<li>在获取Path时进行验证</li>
+</ul>
+<h3 id="10-3-接口防刷（限流）"><a href="#10-3-接口防刷（限流）" class="headerlink" title="10.3 接口防刷（限流）"></a>10.3 接口防刷（限流）</h3><ul>
+<li>当一个用户访问接口时，把访问次数写入缓存，并设置有效期</li>
+<li>一分钟之内如果用户访问，则缓存中的访问次数加一，如果次数超限进行限流操作</li>
+<li>如果一分钟内没有超限，缓存中数据消失，下次再访问时重新写入缓存</li>
+</ul>
+<p>还可以采用限流算法来实现。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/10/17/Java%E7%A7%92%E6%9D%80%E6%96%B9%E6%A1%88/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java%E7%A7%92%E6%9D%80%E6%96%B9%E6%A1%88/" rel="tag">Java秒杀方案</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2022/10/17/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">消息队列</div>
+      </a>
+    
+  </nav>
+
+  
+   
+  
+   
+    <script src="https://cdn.staticfile.org/twikoo/1.4.18/twikoo.all.min.js"></script>
+    <div id="twikoo" class="twikoo"></div>
+    <script>
+        twikoo.init({
+            envId: ""
+        })
+    </script>
+ 
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2022
+        <i class="ri-heart-fill heart_icon"></i> pp-lv
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.png" alt="LPL&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">Home</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">Archives</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">Categories</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">Tags</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">About</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i></p>
+  <div class="reward-box">
+    
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    
+
+  </div>
+</body>
+
+</html>
