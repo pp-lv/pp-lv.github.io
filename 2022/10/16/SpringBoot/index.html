@@ -11,7 +11,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title> LPL&#39;s Blog</title>
+      <title>SpringBoot |  LPL&#39;s Blog</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -60,17 +60,31 @@
   data-scroll-reveal
 >
   <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  SpringBoot
+</h1>
+ 
+
+      
+    </header>
      
     <div class="article-meta">
       <a href="/2022/10/16/SpringBoot/" class="article-date">
-  <time datetime="2022-10-16T12:29:54.328Z" itemprop="datePublished">2022-10-16</time>
-</a>   
+  <time datetime="2022-10-16T12:29:54.000Z" itemprop="datePublished">2022-10-16</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
+  </div>
+  
 <div class="word_count">
     <span class="post-time">
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">2.2k</span>
+            <span class="post-count">2.3k</span>
         </span>
     </span>
 
@@ -94,8 +108,7 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>title: SpringBoot<br>tags: [SpringBoot,八股文]<br>categories: SpringBoot<br>date: 2022-10-16 20:29:54</p>
-<h3 id="1-Spring-boot-相对-Spring有什么优势"><a href="#1-Spring-boot-相对-Spring有什么优势" class="headerlink" title="1.Spring boot 相对 Spring有什么优势"></a>1.Spring boot 相对 Spring有什么优势</h3><p>传统Spirng的弊端</p>
+  <h3 id="1-Spring-boot-相对-Spring有什么优势"><a href="#1-Spring-boot-相对-Spring有什么优势" class="headerlink" title="1.Spring boot 相对 Spring有什么优势"></a>1.Spring boot 相对 Spring有什么优势</h3><p>传统Spirng的弊端</p>
 <ul>
 <li>Spring事物管理，MVC，启用第三方库都需要XML或Java进行显示配置，配置过重</li>
 <li>写配置挤占了实际写应用的逻辑的时间</li>
@@ -113,6 +126,7 @@
 
 <h3 id="2-自动装配的原理"><a href="#2-自动装配的原理" class="headerlink" title="2.自动装配的原理"></a>2.自动装配的原理</h3><h4 id="1-什么是-SpringBoot-自动装配？"><a href="#1-什么是-SpringBoot-自动装配？" class="headerlink" title="1.什么是 SpringBoot 自动装配？"></a>1.什么是 SpringBoot 自动装配？</h4><p>SpringBoot 定义了一套接口规范，这套规范规定：SpringBoot 在启动时会扫描外部引用 jar 包中的<code>META-INF/spring.factories</code>文件，将文件中配置的类型信息加载到 Spring 容器（此处涉及到 JVM 类加载机制与 Spring 的容器知识），并执行类中定义的各种操作。对于外部 jar 来说，只需要按照 SpringBoot 定义的标准，就能将自己的功能装置进 SpringBoot。</p>
 <p><strong>没有 Spring Boot 的情况下</strong>，如果我们需要引入第三方依赖，需要手动配置，非常麻烦。但是，Spring Boot 中，我们直接引入一个 starter 即可。</p>
+<p><code>spring-boot</code>启动的时候会找到<code>starter</code> <code>jar</code>包中的<code>resources/META-INF/spring.factories</code>文件，根据<code>spring.factories</code>文件中的配置，找到需要自动配置的类</p>
 <h4 id="2-SpringBoot-是如何实现自动装配的？如何实现按需加载？"><a href="#2-SpringBoot-是如何实现自动装配的？如何实现按需加载？" class="headerlink" title="2.SpringBoot 是如何实现自动装配的？如何实现按需加载？"></a>2.SpringBoot 是如何实现自动装配的？如何实现按需加载？</h4><img src="/2022/10/16/SpringBoot/image-20220504024438186.png" class="">
 
 <p> 通过SpringBoot 的核心注解 <code>SpringBootApplication</code> 。</p>
@@ -282,11 +296,22 @@
 </div>
 
 <div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%85%AB%E8%82%A1%E6%96%87/" rel="tag">八股文</a></li></ul>
+
     </footer>
   </div>
 
    
   <nav class="article-nav">
+    
+      <a href="/2022/10/17/SpringMVC/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            SpringMVC
+          
+        </div>
+      </a>
     
     
       <a href="/2022/10/13/spring/" class="article-nav-link">
